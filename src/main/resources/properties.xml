@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd" >
+<properties>
+	<!-- 데이터베이스 (오라클) -->
+	<entry key="database.driverClass">oracle.jdbc.driver.OracleDriver</entry>
+	<entry key="database.url">jdbc:oracle:thin:@localhost:1521:orcl</entry>
+<!--	<entry key="database.url">jdbc:oracle:thin:@bookstore_medium?TNS_ADMIN=C:/Users/rldk2/OneDrive/Desktop/oracle-cloud/Wallet_bookstore/</entry>-->
+<!--	<entry key="database.url">jdbc:oracle:thin:@bookstore_medium?TNS_ADMIN=/opt/oracle/wallet_bookstore/</entry>-->
+	<entry key="database.username">ENC(xZ4OVbnhRy+CSGX0QqVjzQ==)</entry>
+	<entry key="database.password">ENC(M4HsFDN7LnQGc43n2PLqEjn3M6na5dfz)</entry>
+	
+	<!-- jwt secret -->
+	<entry key="jwt.secret">ENC(FobfJp87Y3Yfivqvj4tbOy7t7wB6DHa/IMxrInw08jEyFPCal/U9LWLsI2MAVKk8/Rv7Wq/iblU=)</entry>
+	
+	<!-- 네이버 API -->
+	<entry key="naver.id">ENC(BY5e9FWtL6JoNNZDO2WCM8XblO9cE5vOyQxcMfAhK74=)</entry>
+	<entry key="naver.secret">ENC(tp5u+MtRFHULJYpLUWzxBxWofuT37IxM)</entry>
+	
+	<!-- 인터파크 책 API -->
+	<entry key="interpark.key">ENC(1QwEwh5/Mxc3hNlNlWVa/gdEbBDuvZmlG0qTUD1j8DBgsCDD3DLsfmhnOgFkz2KRtu7OczRgrEBEyg8Arnxlsd+LTicOS6cgeiOuJO56eKM=)</entry>
+</properties>
