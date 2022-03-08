@@ -1,5 +1,6 @@
 package kr.rldk2002.bookstore.configuration;
 
+import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,17 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         return registrationBean;
     }
 
+    /*
+     * XSS
+     */
+    @Bean
+    public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
+        FilterRegistrationBean<XssEscapeServletFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new XssEscapeServletFilter());
+        registrationBean.setOrder(1);
+        registrationBean.addUrlPatterns("/*");
+        return registrationBean;
+    }
 
 
 }
