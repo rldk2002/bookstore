@@ -4,9 +4,20 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <settings>
-        <setting name="jdbcTypeForNull" value="NULL"/>
-        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="jdbcTypeForNull" value="NULL" />
+        <setting name="mapUnderscoreToCamelCase" value="true" />
     </settings>
 
+    <typeAliases>
+        <typeAlias type="kr.rldk2002.bookstore.member.Member" alias="Member" />
+    </typeAliases>
 
+    <typeHandlers>
+        <typeHandler handler="kr.rldk2002.bookstore.security.support.SimpleGrantedAuthoritiesTypeHandler" javaType="java.util.Set" />
+        <typeHandler handler="kr.rldk2002.bookstore.security.support.AccountStatusesTypeHandler" javaType="java.util.Set" />
+    </typeHandlers>
+
+    <mappers>
+        <mapper resource="mybatis/mapper/member.xml" />
+    </mappers>
 </configuration>

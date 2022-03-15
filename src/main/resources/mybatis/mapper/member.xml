@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.rldk2002.bookstore.member.MemberMapper">
+    <resultMap id="MemberResultMap" type="Member">
+        <id column="MEMBER_NO" property="no"/>
+        <id column="MEMBER_ID" property="id"/>
+        <result column="MEMBER_PASSWORD" property="password"/>
+        <result column="MEMBER_NAME" property="name"/>
+        <result column="MEMBER_CREATION_DATE" property="creationDate"/>
+        <result column="MEMBER_DELETION_DATE" property="deletionDate"/>
+        <result column="MEMBER_ROLES" property="roles"
+                typeHandler="kr.rldk2002.bookstore.security.support.SimpleGrantedAuthoritiesTypeHandler"/>
+        <result column="MEMBER_STATUSES" property="statuses"
+                typeHandler="kr.rldk2002.bookstore.security.support.AccountStatusesTypeHandler"/>
+    </resultMap>
+
+    <select id="selectMember" resultMap="MemberResultMap">
+        SELECT MEMBER_NO,
+               MEMBER_ID,
+               MEMBER_PASSWORD,
+               MEMBER_NAME,
+               MEMBER_CREATION_DATE,
+               MEMBER_DELETION_DATE,
+               MEMBER_ROLES,
+               MEMBER_STATUSES
+        FROM MEMBER
+        <where>
+            <if test="no neq null">AND MEMBER_NO = #{ no }</if>
+            <if test="id neq null">AND MEMBER_ID = #{ id }</if>
+        </where>
+    </select>
+</mapper>

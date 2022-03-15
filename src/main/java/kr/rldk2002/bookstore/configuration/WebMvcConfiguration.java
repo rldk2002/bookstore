@@ -1,16 +1,19 @@
 package kr.rldk2002.bookstore.configuration;
 
 import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
+import kr.rldk2002.bookstore.security.jwt.JwtAuthenticationInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfiguration implements WebMvcConfigurer {
+    private final JwtAuthenticationInterceptor jwtAuthenticationInterceptor;
 
     /*
      * 한글 인코딩
@@ -40,5 +43,11 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         return registrationBean;
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(jwtAuthenticationInterceptor)
+                .excludePathPatterns("/auth/login/jwt", "/auth/signup")
+                .addPathPatterns("/**");
+    }
 
 }

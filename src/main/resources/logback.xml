@@ -11,35 +11,9 @@
 		</encoder>
 	</appender>
 
-	<!-- <appender name="FILE_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<encoder>
-			<Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %msg%n</Pattern>
-		</encoder>
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${LOGS_PATH}/logback.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
-			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>5MB</maxFileSize>
-			</timeBasedFileNamingAndTriggeringPolicy>
-			<maxHistory>30</maxHistory>
-		</rollingPolicy>
-		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>INFO</level>
-		</filter>
-	</appender> -->
-
-	<logger name="com.rldk2002.bookstore" level="TRACE" additivity="false">
+	<logger name="kr.rldk2002.bookstore" level="DEBUG" additivity="false">
 		<appender-ref ref="STDOUT" />
 		<!-- <appender-ref ref="FILE_APPENDER" /> -->
-	</logger>
-	<logger name="com.rldk2002.bookstore.security.jwt" level="OFF" additivity="false">
-		<appender-ref ref="STDOUT" />
-	</logger>
-	
-	<logger name="com.rldk2002.bookstore.member.mapper" level="OFF" additivity="false">
-		<appender-ref ref="STDOUT" />
-	</logger>
-	<logger name="com.rldk2002.bookstore.book.mapper" level="OFF" additivity="false">
-		<appender-ref ref="STDOUT" />
 	</logger>
 
     <root level="INFO" additivity="false">
