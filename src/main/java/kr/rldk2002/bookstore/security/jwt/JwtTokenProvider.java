@@ -63,6 +63,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(user.getNo())               // 회원 번호
                 .claim("id", user.getId())           // 회원 아이디
+                .claim("name", user.getName())       // 회원 이름
                 .claim(ROLES_KEY, roles)                // 회원 권한
                 .claim(STATUSES_KEY, statuses)          // 회원 상태
                 .setIssuedAt(now)                       // 토큰 발행일
@@ -102,16 +103,17 @@ public class JwtTokenProvider {
 
         String no = claims.getSubject();
         String id = claims.get("id", String.class);
+        String name = claims.get("name", String.class);
 
         Set<SimpleGrantedAuthority> roles = Set.of();
-        if (claims.get(ROLES_KEY, String.class) != null) {
+        if (StringUtils.hasText(claims.get(ROLES_KEY, String.class))) {
             roles = Arrays.stream(claims.get(ROLES_KEY, String.class).split(","))
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toSet());
         }
 
         Set<AccountStatus> statuses = Set.of();
-        if (claims.get(STATUSES_KEY, String.class) != null) {
+        if (StringUtils.hasText(claims.get(STATUSES_KEY, String.class))) {
             statuses = Arrays.stream(claims.get(STATUSES_KEY, String.class).split(","))
                     .map(AccountStatus::valueOf)
                     .collect(Collectors.toSet());
@@ -120,6 +122,7 @@ public class JwtTokenProvider {
         Member member = new Member();
         member.setId(id);
         member.setNo(no);
+        member.setName(name);
         member.setRoles(roles);
         member.setStatuses(statuses);
         User principal = new User(member);

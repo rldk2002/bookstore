@@ -4,10 +4,11 @@ import ErrorPage from "./pages/error/ErrorPage";
 import { ErrorBoundary } from "react-error-boundary";
 import { BrowserRouter } from "react-router-dom";
 import GlobalStyle from "./styles/GlobalStyle";
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider as StyledComponentsThemeProvider } from "styled-components";
 import theme from "./styles/theme";
 import { Flip, ToastContainer } from "react-toastify";
 import AppRoute from "./AppRoute";
+import { ThemeProvider as MuiThemeProvider } from "@mui/material";
 
 
 const App = () => {
@@ -37,14 +38,16 @@ const App = () => {
             >
                 <BrowserRouter>
                     <GlobalStyle />
-                    <ThemeProvider theme={ theme }>
-                        <AppRoute />
-                        <ToastContainer
-                            autoClose={ 500 }
-                            hideProgressBar
-                            transition={ Flip }
-                        />
-                    </ThemeProvider>
+                    <StyledComponentsThemeProvider theme={ theme }>
+                        <MuiThemeProvider theme={ theme }>
+                            <AppRoute />
+                            <ToastContainer
+                                autoClose={ 500 }
+                                hideProgressBar
+                                transition={ Flip }
+                            />
+                        </MuiThemeProvider>
+                    </StyledComponentsThemeProvider>
                 </BrowserRouter>
             </ErrorBoundary>
         </QueryClientProvider>

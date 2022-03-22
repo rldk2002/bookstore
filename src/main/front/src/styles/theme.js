@@ -1,12 +1,19 @@
-const colors = {
-    // darkBlue: "#185a9d",
-    // emerald: "#43cea2",
-    // grey: "#e5e7e9",
-    // grey2: "#99A3A4"
-};
+import { createTheme } from "@mui/material";
 
-const theme = {
-    colors
-};
+const theme = createTheme({
+    breakpoints: {
+        values: {
+            xs: 0,
+            sm: 600,
+            md: 900,
+            lg: 1200,
+            xl: 1536,
+            mobile: 0,
+            tablet: 768,
+            laptop: 992,
+            desktop: 1200,
+        },
+    }
+});
 
 export default theme;

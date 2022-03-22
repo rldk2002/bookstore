@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import EmptyLayout from "../../components/layout/EmptyLayout";
 import styled from "styled-components";
-import { device } from "../../styles/device";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Alert, TextField } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Alert, Link, Stack, TextField, Typography } from "@mui/material";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
 import { useLoginJWT } from "../../api/queries";
 import { useQueryClient } from "react-query";
+import MainLayout from "../../components/layout/MainLayout";
+import { Home } from "@mui/icons-material";
+import BasicBreadcrumbs from "../../components/BasicBreadcrumbs";
 
 
 const Login = () => {
@@ -52,49 +53,56 @@ const Login = () => {
         })
     };
     
+    const breadcrumbs = [
+        <Link underline="hover" key="1" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center' }}><Home sx={{ pr: 1 }} /> Home</Link>,
+        <Typography key="3" color="text.primary">로그인</Typography>,
+    ];
+    
     return (
-        <EmptyLayout>
+        <MainLayout>
+            <BasicBreadcrumbs breadcrumbs={ breadcrumbs } />
             <Wrapper>
                 <Logo>
-                    <Link to="/">BookStore</Link>
+                    <Link href="/" underline="hover" color="inherit">BookStore</Link>
                 </Logo>
                 <LoginForm onSubmit={ handleSubmit(handleValid) }>
-                    <FormField>
+                    <Stack>
                         <TextField
                             label="아이디"
                             variant="outlined"
                             autoComplete="off"
+                            margin="normal"
                             fullWidth
                             required
                             { ...register("id") }
                         />
-                    </FormField>
-                    <FormField>
                         <TextField
                             label="비밀번호"
                             variant="outlined"
                             type="password"
                             autoComplete="off"
+                            margin="normal"
                             fullWidth
                             required
                             { ...register("password") }
                         />
-                    </FormField>
-                    <FormField>
-                        <LoadingButton
-                            type="submit"
-                            variant="contained"
-                            size="large"
-                            loading={ isLoading }
-                            fullWidth
-                        >
-                            로그인
-                        </LoadingButton>
-                    </FormField>
-                    { failMessage && <Alert severity="error">{ failMessage }</Alert> }
+                        { failMessage && <Alert severity="error">{ failMessage }</Alert> }
+                        <ButtonField>
+                            <LoadingButton
+                                type="submit"
+                                variant="contained"
+                                size="large"
+                                loading={ isLoading }
+                                fullWidth
+                            >
+                                로그인
+                            </LoadingButton>
+                        </ButtonField>
+                    </Stack>
                 </LoginForm>
+                <Link href="/signup" underline="hover" color="inherit">회원가입</Link>
             </Wrapper>
-        </EmptyLayout>
+        </MainLayout>
     );
 };
 
@@ -106,7 +114,7 @@ const Wrapper = styled.div`
 	align-items: center;
 	width: 100%;
 	
-    @media ${ device.tablet } {
+    ${ ({ theme }) => theme.breakpoints.up('tablet') } {
         width: 400px;
     }
 `;
@@ -121,7 +129,8 @@ const LoginForm = styled.form`
     width: 100%;
     padding: 20px;
 `;
-const FormField = styled.div`
+const ButtonField = styled.div`
     width: 100%;
-    margin-bottom: 20px;
+    margin-top: 16px;
+    margin-bottom: 8px;
 `;

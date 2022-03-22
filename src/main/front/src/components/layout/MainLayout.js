@@ -1,17 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from "styled-components";
+import MainAppBar from "../appbar/MainAppBar";
 
 const MainLayout = ({ children }) => {
-    const [isOpened, setOpened] = useState(false);
     
     return (
         <Wrapper>
-            {
-                !isOpened &&
-                <>
-                    { children }
-                </>
-            }
+            <MainAppBar />
+            { children }
         </Wrapper>
     );
 };
