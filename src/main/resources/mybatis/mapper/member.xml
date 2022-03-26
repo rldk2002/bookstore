@@ -32,4 +32,26 @@
             <if test="id neq null">AND MEMBER_ID = #{ id }</if>
         </where>
     </select>
+
+    <insert id="insertMember">
+        INSERT INTO MEMBER (
+                MEMBER_NO,
+                MEMBER_ID,
+                MEMBER_PASSWORD,
+                MEMBER_NAME,
+                MEMBER_CREATION_DATE,
+                MEMBER_ROLES,
+                MEMBER_STATUSES
+        )
+        VALUES (
+                #{ member.no },
+                #{ member.id },
+                #{ member.password },
+                #{ member.name },
+                sysdate,
+                #{ member.roles, typeHandler=kr.rldk2002.bookstore.security.support.SimpleGrantedAuthoritiesTypeHandler },
+                #{ member.statuses, typeHandler=kr.rldk2002.bookstore.security.support.AccountStatusesTypeHandler }
+        )
+    </insert>
+
 </mapper>

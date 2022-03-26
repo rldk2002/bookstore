@@ -3,7 +3,7 @@ import ajax from "./axiosInterceptor";
 import { queryKeys, queryKeywords } from "./queryKeys";
 
 /** 회원 로그인 */
-export const useLoginJWT = () => {
+export const useLogin = () => {
     return useMutation(
         form => ajax.post("/login/jwt", null, {
             params: {
@@ -31,4 +31,13 @@ export const useAuthentication = () => {
 /** 회원 로그아웃 */
 export const useLogout = () => {
     return useMutation(() => ajax.post("/logout"));
+}
+
+/** 회원 추가 */
+export const useAddMember = () => {
+    return useMutation(form  => ajax.post("/member", null, {
+            params: form
+        })
+    )
+
 }

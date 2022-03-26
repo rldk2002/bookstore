@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
-import { useLoginJWT } from "../../api/queries";
+import { useLogin } from "../../api/queries";
 import { useQueryClient } from "react-query";
 import MainLayout from "../../components/layout/MainLayout";
 import { Home } from "@mui/icons-material";
@@ -28,7 +28,7 @@ const Login = () => {
         reValidateMode: "onSubmit",
         resolver: yupResolver(schema)
     });
-    const { mutateAsync: mutateAsyncLogin, isLoading } = useLoginJWT();
+    const { mutateAsync: mutateAsyncLogin, isLoading } = useLogin();
     const handleValid = async form => {
         await mutateAsyncLogin(form, {
             onSuccess: response => {
