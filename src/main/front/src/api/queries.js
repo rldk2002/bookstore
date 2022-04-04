@@ -38,6 +38,22 @@ export const useAddMember = () => {
     return useMutation(form  => ajax.post("/member", null, {
             params: form
         })
-    )
+    );
 
+}
+
+/**
+ * 인터파크 도서 책 검색
+ * @Url http://book.interpark.com/bookPark/html/bookpinion/api_booksearch.html
+ * */
+export const useFetchBook = params => {
+    return useQuery(
+        queryKeys.bookList(params),
+        () => ajax.get("/books/search", {
+            params: params
+        }), {
+            staleTime: Infinity,
+            cacheTime: Infinity
+        }
+    );
 }
