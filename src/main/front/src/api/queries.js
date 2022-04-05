@@ -46,11 +46,24 @@ export const useAddMember = () => {
  * 인터파크 도서 책 검색
  * @Url http://book.interpark.com/bookPark/html/bookpinion/api_booksearch.html
  * */
-export const useFetchBook = params => {
+export const useFetchBookQuery = params => {
     return useQuery(
         queryKeys.bookList(params),
         () => ajax.get("/books/search", {
             params: params
+        }), {
+            staleTime: Infinity,
+            cacheTime: Infinity
+        }
+    );
+}
+export const useFetchBookSection = (categoryId, section) => {
+    return useQuery(
+        queryKeys.bookList({ categoryId: categoryId, section: section }),
+        () => ajax.get("/books/category/" + categoryId, {
+            params: {
+                section: section
+            }
         }), {
             staleTime: Infinity,
             cacheTime: Infinity

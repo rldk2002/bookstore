@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Login from "./pages/authentication/Login";
 import SignUp from "./pages/authentication/SignUp";
 import BookSearchResult from "./pages/book/BookSearchResult";
+import BookCategoryResult from "./pages/book/BookCategoryResult";
 
 const AppRoute = () => {
     return (
@@ -14,6 +15,7 @@ const AppRoute = () => {
             <Route path="/signup" element={ <SignUp /> } />
             <Route path="/books/*">
                 <Route path="search" element={ <BookSearchResult /> } />
+                <Route path="category/:categoryId" element={ <BookCategoryResult /> } />
             </Route>
             <Route path="*" element={ <NotFound /> } />
         </Routes>

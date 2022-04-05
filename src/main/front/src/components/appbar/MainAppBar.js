@@ -313,7 +313,13 @@ const MainAppBar = () => {
                                                                 .map(([key, value]) => [key, value.substring("국내도서>".length)])
                                                                 .map(([key, value]) => {
                                                                     return (
-                                                                        <ListItemButton sx={{ pl: 4 }} key={ key }>{ value }</ListItemButton>
+                                                                        <ListItemButton
+                                                                            sx={{ pl: 4 }}
+                                                                            key={ key }
+                                                                            onClick={() => navigate(`/books/category/${ key }`)}
+                                                                        >
+                                                                            { value }
+                                                                        </ListItemButton>
                                                                     );
                                                                 })
                                                         }
@@ -330,7 +336,13 @@ const MainAppBar = () => {
                                                                 .map(([key, value]) => [key, value.substring("외국도서>".length)])
                                                                 .map(([key, value]) => {
                                                                     return (
-                                                                        <ListItemButton sx={{ pl: 4 }} key={ key }>{ value }</ListItemButton>
+                                                                        <ListItemButton
+                                                                            sx={{ pl: 4 }}
+                                                                            key={ key }
+                                                                            onClick={() => navigate(`/books/category/${ key }`)}
+                                                                        >
+                                                                            { value }
+                                                                        </ListItemButton>
                                                                     );
                                                                 })
                                                         }

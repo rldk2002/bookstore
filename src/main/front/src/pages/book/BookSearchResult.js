@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Home } from "@mui/icons-material";
 import BasicBreadcrumbs from "../../components/BasicBreadcrumbs";
-import { useFetchBook } from "../../api/queries";
+import { useFetchBookQuery } from "../../api/queries";
 import styled from "styled-components";
 import BookItem from "./part/BookItem";
 import produce from "immer";
@@ -88,7 +88,7 @@ const BookSearchResult = () => {
         isLoading: isFetchBookLoading,
         isSuccess: isFetchBookSuccess,
         data: { item: books, totalResults, maxResults } = {}
-    } = useFetchBook(params);
+    } = useFetchBookQuery(params);
     
     const breadcrumbs = [
         <Link underline="hover" key="1" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center' }}><Home sx={{ pr: 1 }} /> Home</Link>,

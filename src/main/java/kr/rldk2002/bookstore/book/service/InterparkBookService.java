@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,8 +23,9 @@ public class InterparkBookService {
     /**
      * http://book.interpark.com/bookPark/html/bookpinion/api_booksearch.html
      */
-    public InterparkBookResult search(
-            @NonNull String query,
+    @PreAuthorize("permitAll()")
+    public InterparkBookResult searchQuery(
+            String query,
             String queryType,
             String searchTarget,
             String start,
@@ -41,6 +43,33 @@ public class InterparkBookService {
                         .queryParam("start", start)
                         .queryParam("maxResults", maxResults)
                         .queryParam("sort", sort)
+                        .queryParam("categoryId", categoryId)
+                        .build()
+                )
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(response, InterparkBookResult.class);
+    }
+
+    /**
+     * http://book.interpark.com/bookPark/html/bookpinion/api_bestseller.html
+     * http://book.interpark.com/bookPark/html/bookpinion/api_recommend.html
+     * http://book.interpark.com/bookPark/html/bookpinion/api_newbook.html
+     * @param section bestSeller, recommend, newBook
+     */
+    @PreAuthorize("permitAll()")
+    public InterparkBookResult searchSection(
+            String categoryId,
+            String section
+    ) throws JsonProcessingException {
+        String response = WebClient.create("http://book.interpark.com/api").get()
+                .uri("/" + section + ".api", uriBuilder -> uriBuilder
+                        .queryParam("key", key)
+                        .queryParam("output", "json")
                         .queryParam("categoryId", categoryId)
                         .build()
                 )

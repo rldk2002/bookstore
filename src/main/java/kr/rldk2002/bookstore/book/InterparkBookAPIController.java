@@ -7,10 +7,7 @@ import kr.rldk2002.bookstore.book.service.InterparkBookService;
 import kr.rldk2002.bookstore.book.validation.BookGroupMarker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,12 +27,27 @@ public class InterparkBookAPIController {
             @RequestParam(name = "sort", defaultValue = "accuracy") String sort,
             @RequestParam(name = "categoryId", defaultValue = "100") String categoryId
     ) throws JsonProcessingException {
-        InterparkBookResult result = interparkBookService.search(
+        InterparkBookResult result = interparkBookService.searchQuery(
                 query, queryType, searchTarget, page, maxResults, sort, categoryId
         );
         log.debug(
                 "[ 인터파크 도서 API ] query: {}, searchTarget: {}, categoryId: {}, page: {}, sort: {}",
                 query, searchTarget, categoryId, page, sort
+        );
+        return result;
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public InterparkBookResult bookListByCategoryId(
+            @PathVariable("categoryId") String categoryId,
+            @RequestParam("section") String section
+    ) throws JsonProcessingException {
+        InterparkBookResult result = interparkBookService.searchSection(
+                categoryId, section
+        );
+        log.debug(
+                "[ 인터파크 도서 API ] categoryId: {}, section: {}",
+                categoryId, section
         );
         return result;
     }
