@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from 'react';
+import React, { useState, Fragment, useContext } from 'react';
 import {
     alpha,
     AppBar,
@@ -48,6 +48,7 @@ import { queryKeywords } from "../../api/queryKeys";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { loadSearchHistory, removeSearchHistory, saveSearchHistory } from "../../services/localStorageService";
 import { blue } from "@mui/material/colors";
+import BookCategoryContext from "../../context/BookCategoryContext";
 
 const useStyle = makeStyles({
     Link : {
@@ -105,6 +106,7 @@ const TransitionFade = React.forwardRef(function Transition(props, ref) {
 });
 
 const MainAppBar = () => {
+    const categoryNameContext = useContext(BookCategoryContext);
     const navigate = useNavigate();
     const location = useLocation();
     const classes = useStyle();
@@ -112,21 +114,7 @@ const MainAppBar = () => {
     const [isDrawerOpen, toggleDrawer] = useState(false);   // 모바일 화면 좌측 햄버거 메뉴 toggle
     const [isDomesticBookListOpen, setDomesticBookListOpen] = useState(false);  // 국내도서 카테고리 리스트 toggle
     const [isOverseasBookListOpen, setOverseasBookListOpen] = useState(false);  // 해외도서 카테고리 리스트 toggle
-    const [categories, setCategories] = useState({});   // 인터파크 도서 카테고리 정보
     const [isSearchDialogOpen, setSearchDialogOpen] = useState(false);  // 검색창(모바일) dialog toggle
-    
-    useEffect(() => {
-        fetch("/book/interpark_book_categories.txt")
-            .then(r => r.text())
-            .then(text => {
-                let map = {};
-                text.replace(/(\b[^=]+)=([^\n]+)\n/g, ($0, key, value) => {
-                    map[key] = value;
-                    return ;
-                });
-                setCategories(map);
-            });
-    }, []);
     
     const menus = [
         { name: '국내도서', icon: <LibraryBooksIcon />, action: () => setDomesticBookListOpen(!isDomesticBookListOpen), nested: true },
@@ -186,26 +174,47 @@ const MainAppBar = () => {
             search: `${ createSearchParams({ query: query }) }`
         });
     }
+    function redirectLogin() {
+        navigate("/login", { state: { from: location.pathname + location.search } });
+    }
     
     return (
         <>
             <AppBar position="static">
                 {
                     // 데스크톱 화면 최상단 작은 Appbar
-                    !matches &&
-                    <Box sx={{ display: "flex", px: 3, py: 0.5, backgroundColor: blue['800'] }}>
-                        <NavGroup>
-                            <Link component="button" underline="none" sx={{ color: "white" }} onClick={ () => navigate("/signup") }>회원가입</Link>
-                            <Link
-                                component="button"
-                                underline="none"
-                                sx={{ color: "white" }}
-                                onClick={ () => navigate("/login", { state: { from: location.pathname } }) }
-                            >
-                                로그인
-                            </Link>
-                        </NavGroup>
-                    </Box>
+                    !matches && (
+                        <Box sx={{ display: "flex", px: 3, py: 0.5, backgroundColor: blue['800'] }}>
+                            {
+                                principal ? (
+                                    <NavGroup>
+                                        <Link component="button" underline="none" sx={{ color: "white" }}>장바구니</Link>
+                                        <Link component="button" underline="none" sx={{ color: "white" }}>마이페이지</Link>
+                                        <Link
+                                            component="button"
+                                            underline="none"
+                                            sx={{ color: "white" }}
+                                            onClick={ handleLogout }
+                                        >
+                                            로그아웃
+                                        </Link>
+                                    </NavGroup>
+                                ) : (
+                                    <NavGroup>
+                                        <Link component="button" underline="none" sx={{ color: "white" }} onClick={ () => navigate("/signup") }>회원가입</Link>
+                                        <Link
+                                            component="button"
+                                            underline="none"
+                                            sx={{ color: "white" }}
+                                            onClick={ redirectLogin }
+                                        >
+                                            로그인
+                                        </Link>
+                                    </NavGroup>
+                                )
+                            }
+                        </Box>
+                    )
                 }
                 <Container maxWidth={ false }>
                     <Toolbar disableGutters>
@@ -287,7 +296,7 @@ const MainAppBar = () => {
                             ) : (
                                 <BottomNavigation showLabels>
                                     <BottomNavigationAction label="회원가입" icon={ <GroupAddIcon /> } onClick={ () => navigate("/signup") }/>
-                                    <BottomNavigationAction label="로그인" icon={ <LoginIcon /> } onClick={ () => navigate("/login", { state: { from: location.pathname } }) }/>
+                                    <BottomNavigationAction label="로그인" icon={ <LoginIcon /> } onClick={ redirectLogin }/>
                                 </BottomNavigation>
                             )
                             
@@ -308,7 +317,7 @@ const MainAppBar = () => {
                                                 <Collapse in={ isDomesticBookListOpen } timeout="auto" unmountOnExit>
                                                     <List component="div" disablePadding>
                                                         {
-                                                            Object.entries(categories)
+                                                            Object.entries(categoryNameContext)
                                                                 .filter(([key, value]) => value.startsWith("국내도서>"))
                                                                 .map(([key, value]) => [key, value.substring("국내도서>".length)])
                                                                 .map(([key, value]) => {
@@ -331,7 +340,7 @@ const MainAppBar = () => {
                                                 <Collapse in={ isOverseasBookListOpen } timeout="auto" unmountOnExit>
                                                     <List component="div" disablePadding>
                                                         {
-                                                            Object.entries(categories)
+                                                            Object.entries(categoryNameContext)
                                                                 .filter(([key, value]) => value.startsWith("외국도서>"))
                                                                 .map(([key, value]) => [key, value.substring("외국도서>".length)])
                                                                 .map(([key, value]) => {

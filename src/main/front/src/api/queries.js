@@ -48,7 +48,7 @@ export const useAddMember = () => {
  * */
 export const useFetchBookQuery = params => {
     return useQuery(
-        queryKeys.bookList(params),
+        queryKeys.bookList([params]),
         () => ajax.get("/books/search", {
             params: params
         }), {
@@ -59,12 +59,21 @@ export const useFetchBookQuery = params => {
 }
 export const useFetchBookSection = (categoryId, section) => {
     return useQuery(
-        queryKeys.bookList({ categoryId: categoryId, section: section }),
+        queryKeys.bookList([{ categoryId: categoryId, section: section }]),
         () => ajax.get("/books/category/" + categoryId, {
             params: {
                 section: section
             }
         }), {
+            staleTime: Infinity,
+            cacheTime: Infinity
+        }
+    );
+}
+export const useFetchBookItem = itemId => {
+    return useQuery(
+        queryKeys.book({ itemId: itemId }),
+        () => ajax.get("/books/item/" + itemId), {
             staleTime: Infinity,
             cacheTime: Infinity
         }

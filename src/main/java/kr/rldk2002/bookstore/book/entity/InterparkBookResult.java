@@ -1,8 +1,7 @@
 package kr.rldk2002.bookstore.book.entity;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import kr.rldk2002.bookstore.book.entity.InterparkBook;
-import kr.rldk2002.bookstore.book.validation.BookGroupMarker.*;
+import kr.rldk2002.bookstore.book.validation.BookGroupMarker.View;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,12 +37,16 @@ public class InterparkBookResult {
     @JsonView({ View.class })
     private List<InterparkBook> item;
 
+    @JsonView({ View.class })
     private String title;
+
     private String link;
     private String imageUrl;
     private String language;
     private String copyright;
     private String pubDate;
+
+    @JsonView({ View.class })
     private String returnCode;
     private String returnMessage;
 }

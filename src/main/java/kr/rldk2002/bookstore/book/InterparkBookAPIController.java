@@ -2,6 +2,7 @@ package kr.rldk2002.bookstore.book;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import kr.rldk2002.bookstore.book.entity.InterparkBook;
 import kr.rldk2002.bookstore.book.entity.InterparkBookResult;
 import kr.rldk2002.bookstore.book.service.InterparkBookService;
 import kr.rldk2002.bookstore.book.validation.BookGroupMarker;
@@ -37,6 +38,7 @@ public class InterparkBookAPIController {
         return result;
     }
 
+    @JsonView(BookGroupMarker.View.class)
     @GetMapping("/category/{categoryId}")
     public InterparkBookResult bookListByCategoryId(
             @PathVariable("categoryId") String categoryId,
@@ -49,6 +51,14 @@ public class InterparkBookAPIController {
                 "[ 인터파크 도서 API ] categoryId: {}, section: {}",
                 categoryId, section
         );
+        return result;
+    }
+
+    @JsonView(BookGroupMarker.View.class)
+    @GetMapping("/item/{itemId}")
+    public InterparkBookResult bookOneByItemId(@PathVariable("itemId") String itemId) throws JsonProcessingException {
+        InterparkBookResult result = interparkBookService.searchItem(itemId);
+        log.debug("[ 인터파크 도서 API ] itemId: {}", itemId);
         return result;
     }
 

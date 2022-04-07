@@ -20,7 +20,7 @@ const App = () => {
                 cacheTime: 1000 * 60 * 30,
                 refetchOnMount: true,
                 refetchOnWindowFocus: false,
-                useErrorBoundary: false
+                useErrorBoundary: true
             },
             mutations: {
                 retry: false,

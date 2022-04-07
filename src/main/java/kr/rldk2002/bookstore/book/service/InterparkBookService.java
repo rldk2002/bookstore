@@ -2,6 +2,7 @@ package kr.rldk2002.bookstore.book.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.rldk2002.bookstore.book.entity.InterparkBook;
 import kr.rldk2002.bookstore.book.entity.InterparkBookResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -80,5 +81,28 @@ public class InterparkBookService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(response, InterparkBookResult.class);
+    }
+
+    /**
+     * http://book.interpark.com/bookPark/html/bookpinion/api_booksearch.html
+     */
+    @PreAuthorize("permitAll()")
+    public InterparkBookResult searchItem(String itemId) throws JsonProcessingException {
+        String response = WebClient.create("http://book.interpark.com/api").get()
+                .uri("/search.api", uriBuilder -> uriBuilder
+                        .queryParam("key", key)
+                        .queryParam("output", "json")
+                        .queryParam("queryType", "productNumber")
+                        .queryParam("query", itemId)
+                        .build()
+                )
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        InterparkBookResult result = objectMapper.readValue(response, InterparkBookResult.class);
+        return result;
     }
 }

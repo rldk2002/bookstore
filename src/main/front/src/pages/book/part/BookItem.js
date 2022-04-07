@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from "styled-components";
 import { grey } from "@mui/material/colors";
 import { Link } from "react-router-dom";
-import { Collapse, IconButton, Typography, useMediaQuery } from "@mui/material";
+import { Collapse, IconButton, Paper, Typography, useMediaQuery } from "@mui/material";
 import { AddShoppingCart as AddShoppingCartIcon, ExpandLess, ExpandMore, Favorite as FavoriteIcon } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 
@@ -25,20 +25,22 @@ const BookItem = ({ book }) => {
     return (
         <Wrapper>
             <BookContent>
-                <Link to={ `/books/${ itemId }` }>
-                    <Cover>
-                        <img src={ cover } alt={ title } />
-                    </Cover>
+                <Link to={ `/books/item/${ itemId }` }>
+                    <Paper variant="outlined">
+                        <Cover>
+                            <img src={ cover } alt={ title } />
+                        </Cover>
+                    </Paper>
                 </Link>
                 <MetaData>
-                    <Link to={ `/books/${ itemId }` }>
+                    <Link to={ `/books/item/${ itemId }` }>
                         <Typography variant="h6" gutterBottom component="div">{ title }</Typography>
                     </Link>
                     <MetaDataList>
                         { author && <Attribute><span>저자</span>{author}</Attribute> }
                         { publisher && <Attribute><span>출판</span>{ publisher }</Attribute> }
                         { pubDate && <Attribute><span>출간일</span>{ [pubDate.slice(0, 4), ".", pubDate.slice(4, 6), ".", pubDate.slice(6, 8)].join('') }</Attribute> }
-                        { price && <Attribute><span>가격</span><Price>{ `${ price.toLocaleString() }원`}</Price></Attribute> }
+                        { price && <Attribute><span>가격</span><Price>{ `${ price.toLocaleString() }원` }</Price></Attribute> }
                     </MetaDataList>
                 </MetaData>
                 {

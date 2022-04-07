@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import MainLayout from "../../components/layout/MainLayout";
 import {
@@ -19,24 +19,23 @@ import styled from "styled-components";
 import BookItem from "./part/BookItem";
 import produce from "immer";
 import queryString from "query-string";
+import BookCategoryContext from "../../context/BookCategoryContext";
 
 const BookSearchResult = () => {
+    const categoryNameContext = useContext(BookCategoryContext);
     const navigate = useNavigate();
     const location = useLocation();
     const params = queryString.parse(location.search);
-    const [categories, setCategories] = useState({});   // 인터파크 도서 카테고리 정보
-    useEffect(() => {
-        fetch("/book/interpark_book_categories.txt")
-            .then(r => r.text())
-            .then(text => {
-                let map = {};
-                text.replace(/(\b[^=]+)=([^\n]+)\n/g, ($0, key, value) => {
-                    map[key] = value;
-                    return ;
-                });
-                setCategories(map);
-            });
-    }, []);
+    
+    const {
+        isLoading: isFetchBookLoading,
+        isSuccess: isFetchBookSuccess,
+        data: {
+            item: books,
+            totalResults,
+            maxResults
+        } = {}
+    } = useFetchBookQuery(params);
     
     const handleSearchTargetChange = event => {
         const searchTarget = event.target.value;
@@ -84,12 +83,6 @@ const BookSearchResult = () => {
         });
     }
     
-    const {
-        isLoading: isFetchBookLoading,
-        isSuccess: isFetchBookSuccess,
-        data: { item: books, totalResults, maxResults } = {}
-    } = useFetchBookQuery(params);
-    
     const breadcrumbs = [
         <Link underline="hover" key="1" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center' }}><Home sx={{ pr: 1 }} /> Home</Link>,
         <Typography key="3" color="text.primary">도서 검색결과</Typography>,
@@ -127,7 +120,7 @@ const BookSearchResult = () => {
                                 { ((params.searchTarget || 'book') === 'book') && <MenuItem value={ 100 } >전체</MenuItem> }
                                 {
                                     ((params.searchTarget || 'book') === 'book') &&
-                                    Object.entries(categories)
+                                    Object.entries(categoryNameContext)
                                         .filter(([key, value]) => value.startsWith("국내도서>"))
                                         .map(([key, value]) => [key, value.substring("국내도서>".length)])
                                         .map(([key, value]) => {
@@ -139,7 +132,7 @@ const BookSearchResult = () => {
                                 { (params.searchTarget === 'foreign') && <MenuItem value={ 200 } >전체</MenuItem> }
                                 {
                                     (params.searchTarget === 'foreign') &&
-                                    Object.entries(categories)
+                                    Object.entries(categoryNameContext)
                                         .filter(([key, value]) => value.startsWith("외국도서>"))
                                         .map(([key, value]) => [key, value.substring("외국도서>".length)])
                                         .map(([key, value]) => {

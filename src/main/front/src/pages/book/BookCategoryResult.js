@@ -21,55 +21,61 @@ const BookCategoryResult = () => {
     const {
         isLoading: isFetchBookLoading,
         isSuccess: isFetchBookSuccess,
-        data: { item: books, searchCategoryName, title } = {}
+        data: {
+            item: books,
+            searchCategoryName,
+            title,
+            returnCode
+        } = {}
     } = useFetchBookSection(categoryId, section);
     
     useTitle(`${ searchCategoryName } - ${ title }`);
     
-    if ((categoryId >= 101 && categoryId <= 129) || (categoryId >= 201 && categoryId <= 217)) {
-        const handleTabChange = (event, newValue) => {
-            navigate({
-                pathname: `/books/category/${ categoryId }`,
-                search: `${ createSearchParams({ section: newValue }) }`
-            });
-        };
-        
-        const breadcrumbs = [
-            <Link underline="hover" key="1" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center' }}><Home sx={{ pr: 1 }} /> Home</Link>,
-            <Typography key="3" color="text.primary">{ searchCategoryName?.replace('>', '/') }</Typography>,
-            <Typography key="3" color="text.primary">{ title }</Typography>,
-        ];
-        
-        return (
-            <MainLayout>
-                <Wrapper>
-                    <BasicBreadcrumbs breadcrumbs={ breadcrumbs } />
-                    <Box sx={{ width: 1, borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs value={ section } onChange={ handleTabChange } >
-                            <Tab value="bestSeller" label="베스트셀러" />
-                            <Tab value="recommend" label="추천도서" />
-                            <Tab value="newBook" label="신규도서" />
-                        </Tabs>
-                    </Box>
-                    {
-                        isFetchBookSuccess && books.map(book => {
-                            return (
-                                <BookItem key={ book.itemId } book={ book } />
-                            );
-                        })
-                    }
-                    {
-                        isFetchBookLoading &&
-                        <Box sx={{ width: 1, my: 10, textAlign: "center" }}>
-                            <CircularProgress />
-                        </Box>
-                    }
-                </Wrapper>
-            </MainLayout>
-        );
-    } else {
+    if (returnCode === "401") {
         return <NotFound />;
     }
+    
+    const handleTabChange = (event, newValue) => {
+        navigate({
+            pathname: `/books/category/${ categoryId }`,
+            search: `${ createSearchParams({ section: newValue }) }`
+        });
+    };
+    
+    const breadcrumbs = [
+        <Link underline="hover" key="1" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center' }}><Home sx={{ pr: 1 }} /> Home</Link>,
+        <Typography key="3" color="text.primary">{ searchCategoryName?.split('>')[0] }</Typography>,
+        <Typography key="3" color="text.primary">{ searchCategoryName?.split('>')[1] }</Typography>,
+        <Typography key="3" color="text.primary">{ title }</Typography>,
+    ];
+    
+    return (
+        <MainLayout>
+            <Wrapper>
+                <BasicBreadcrumbs breadcrumbs={ breadcrumbs } />
+                <Box sx={{ width: 1, borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs value={ section } onChange={ handleTabChange } >
+                        <Tab value="bestSeller" label="베스트셀러" />
+                        <Tab value="recommend" label="추천도서" />
+                        <Tab value="newBook" label="신규도서" />
+                    </Tabs>
+                </Box>
+                {
+                    isFetchBookSuccess && books.map(book => {
+                        return (
+                            <BookItem key={ book.itemId } book={ book } />
+                        );
+                    })
+                }
+                {
+                    isFetchBookLoading &&
+                    <Box sx={{ width: 1, my: 10, textAlign: "center" }}>
+                        <CircularProgress />
+                    </Box>
+                }
+            </Wrapper>
+        </MainLayout>
+    );
     
 };
 
