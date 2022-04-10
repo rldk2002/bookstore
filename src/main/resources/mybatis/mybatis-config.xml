@@ -10,6 +10,7 @@
 
     <typeAliases>
         <typeAlias type="kr.rldk2002.bookstore.member.Member" alias="Member" />
+        <typeAlias type="kr.rldk2002.bookstore.book.entity.BookCart" alias="BookCart" />
     </typeAliases>
 
     <typeHandlers>
@@ -19,5 +20,6 @@
 
     <mappers>
         <mapper resource="mybatis/mapper/member.xml" />
+        <mapper resource="mybatis/mapper/book.xml" />
     </mappers>
 </configuration>

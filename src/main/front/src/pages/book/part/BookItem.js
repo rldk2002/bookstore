@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
 import { grey } from "@mui/material/colors";
-import { Link } from "react-router-dom";
-import { Collapse, IconButton, Paper, Typography, useMediaQuery } from "@mui/material";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Collapse, IconButton, Paper, Snackbar, Typography, useMediaQuery } from "@mui/material";
 import { AddShoppingCart as AddShoppingCartIcon, ExpandLess, ExpandMore, Favorite as FavoriteIcon } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
+import { useAddBookToBookCart } from "../../../api/queries";
 
 const BookItem = ({ book }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const {
         itemId,
         priceSales: price,
@@ -20,6 +23,32 @@ const BookItem = ({ book }) => {
     const [isOpen, setOpen] = useState(false);
     const handleCollapseToggle = () => {
         setOpen(!isOpen);
+    }
+    
+    /*
+     * 북카트
+     */
+    const [isSuccessSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
+    const { isLoading: isAddBookCartLoading, mutateAsync: mutateAsyncAddBookCart } = useAddBookToBookCart();
+    const addBookToBookCart = async () => {
+        await mutateAsyncAddBookCart({ itemId: itemId, count: 1 }, {
+            onSuccess: isAuthenticated => {
+                if (isAuthenticated) {
+                    setSuccessSnackbarOpen(true);
+                } else {
+                    if (window.confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")) {
+                        redirectLogin();
+                    }
+                }
+            },
+            onError: err => {
+                console.log(err);
+            }
+        });
+    };
+    
+    function redirectLogin() {
+        navigate("/login", { state: { from: location.pathname + location.search } });
     }
     
     return (
@@ -53,7 +82,15 @@ const BookItem = ({ book }) => {
                     !matches &&
                     <DesktopButtonGroup>
                         <LoadingButton loading={ false } variant="outlined" color="error" startIcon={ <FavoriteIcon /> }>좋아요</LoadingButton>
-                        <LoadingButton loading={ false } variant="outlined" color="primary" startIcon={ <AddShoppingCartIcon /> }>북카트에 담기</LoadingButton>
+                        <LoadingButton
+                            loading={ isAddBookCartLoading }
+                            variant="outlined"
+                            color="primary"
+                            startIcon={ <AddShoppingCartIcon /> }
+                            onClick={ addBookToBookCart }
+                        >
+                            북카트에 담기
+                        </LoadingButton>
                         <LoadingButton loading={ false } variant="contained" color="primary">구매하기</LoadingButton>
                     </DesktopButtonGroup>
                 }
@@ -63,11 +100,26 @@ const BookItem = ({ book }) => {
                 <Collapse in={ isOpen } sx={{ backgroundColor: "white" }}>
                     <MobileButtonGroup>
                         <LoadingButton loading={ false } variant="outlined" color="error" startIcon={ <FavoriteIcon /> }>좋아요</LoadingButton>
-                        <LoadingButton loading={ false } variant="outlined" color="primary" startIcon={ <AddShoppingCartIcon /> }>북카트에 담기</LoadingButton>
+                        <LoadingButton
+                            loading={ isAddBookCartLoading }
+                            variant="outlined"
+                            color="primary"
+                            startIcon={ <AddShoppingCartIcon /> }
+                            onClick={ addBookToBookCart }
+                        >
+                            북카트에 담기
+                        </LoadingButton>
                         <LoadingButton loading={ false } variant="contained" color="primary">구매하기</LoadingButton>
                     </MobileButtonGroup>
                 </Collapse>
             }
+            <Snackbar
+                open={ isSuccessSnackbarOpen }
+                onClose={ () => setSuccessSnackbarOpen(false) }
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                autoHideDuration={ 3000 }
+                message="북카트에 담겼습니다."
+            />
         </Wrapper>
     );
 };

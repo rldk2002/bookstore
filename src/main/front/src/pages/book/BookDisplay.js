@@ -1,28 +1,73 @@
-import React, { useContext } from 'react';
-import { useParams } from "react-router-dom";
+import React, { useContext, useState } from 'react';
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../components/layout/MainLayout";
 import styled from "styled-components";
-import { useFetchBookItem } from "../../api/queries";
-import { Box, CircularProgress, Divider, Link, Paper, Rating, Typography, useMediaQuery } from "@mui/material";
-import { AddShoppingCart as AddShoppingCartIcon, Favorite as FavoriteIcon, Home } from "@mui/icons-material";
+import { useAddBookToBookCart, useFetchBookItem } from "../../api/queries";
+import {
+    AppBar,
+    Box, Button, ButtonGroup,
+    CircularProgress,
+    Divider, Fab, IconButton,
+    Link,
+    Paper,
+    Rating,
+    Snackbar, Typography,
+    useMediaQuery
+} from "@mui/material";
+import { Remove as RemoveIcon, AddShoppingCart as AddShoppingCartIcon, Favorite as FavoriteIcon, Home } from "@mui/icons-material";
 import BasicBreadcrumbs from "../../components/BasicBreadcrumbs";
 import NotFound from "../error/NotFound";
 import BookCategoryContext from "../../context/BookCategoryContext";
 import { grey } from "@mui/material/colors";
 import { LoadingButton } from "@mui/lab";
+import ItemCounter from "./part/ItemCounter";
 
 const BookDisplay = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const matches = useMediaQuery(theme => theme.breakpoints.down('tablet'));
     const categoryNameContext = useContext(BookCategoryContext);
     const { itemId } = useParams();
     const {
         isLoading: isFetchBookLoading,
-        isSuccess: isFetchBookSuccess,
         data: {
             item: books = {},
             totalResults
         } = {}
     } = useFetchBookItem(itemId);
+    
+    /*
+     * 북카트
+     */
+    const [bookCartCount, setBookCartCount] = useState(1);
+    const [isSuccessSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
+    const { isLoading: isAddBookCartLoading, mutateAsync: mutateAsyncAddBookCart } = useAddBookToBookCart();
+    const addBookToBookCart = async () => {
+        if (bookCartCount > 0) {
+            await mutateAsyncAddBookCart({ itemId: itemId, count: bookCartCount }, {
+                onSuccess: isAuthenticated => {
+                    if (isAuthenticated) {
+                        setSuccessSnackbarOpen(true);
+                    } else {
+                        if (window.confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")) {
+                            redirectLogin();
+                        }
+                    }
+                },
+                onError: err => {
+                    console.log(err);
+                }
+            });
+        }
+    };
+    const handleCountChange = count => {
+        setBookCartCount(count);
+    };
+    
+    /*
+     * Botton Appbar
+     */
+    const [isBottomAppbarOpen, setBottomAppbarOpen] = useState(false);
     
     if (isFetchBookLoading) {
         return (
@@ -50,10 +95,14 @@ const BookDisplay = () => {
     
     const breadcrumbs = [
         <Link underline="hover" key="1" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center' }}><Home sx={{ pr: 1 }} /> Home</Link>,
-        <Typography key="3" color="text.primary">{ categoryNameContext[categoryId]?.split('>')[0] }</Typography>,
-        <Typography key="3" color="text.primary">{ categoryNameContext[categoryId]?.split('>')[1] }</Typography>,
-        <Typography key="3" color="text.primary">{ title }</Typography>,
+        <Typography key="2" color="text.primary">{ categoryNameContext[categoryId]?.split('>')[0] }</Typography>,
+        <Link underline="hover" key="3" color="inherit" href={ `/books/category/${ categoryId }` } sx={{ display: 'flex', alignItems: 'center' }}>{ categoryNameContext[categoryId]?.split('>')[1] }</Link>,
+        <Typography key="4" color="text.primary">{ title }</Typography>,
     ];
+    
+    function redirectLogin() {
+        navigate("/login", { state: { from: location.pathname + location.search } });
+    }
     
     return (
         <MainLayout>
@@ -88,11 +137,22 @@ const BookDisplay = () => {
                         </Box>
                         {
                             !matches &&
-                            <DesktopButtonGroup>
-                                <LoadingButton loading={ false } variant="outlined" color="error" startIcon={ <FavoriteIcon /> }>좋아요</LoadingButton>
-                                <LoadingButton loading={ false } variant="outlined" color="primary" startIcon={ <AddShoppingCartIcon /> }>북카트에 담기</LoadingButton>
-                                <LoadingButton loading={ false } variant="contained" color="primary">구매하기</LoadingButton>
-                            </DesktopButtonGroup>
+                                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", ml: "auto" }}>
+                                    <ItemCounter onCountChange={ handleCountChange }/>
+                                    <DesktopButtonGroup>
+                                        <LoadingButton loading={ false } variant="outlined" color="error" startIcon={ <FavoriteIcon /> }>좋아요</LoadingButton>
+                                        <LoadingButton
+                                            loading={ isAddBookCartLoading }
+                                            variant="outlined"
+                                            color="primary"
+                                            startIcon={ <AddShoppingCartIcon /> }
+                                            onClick={ addBookToBookCart }
+                                        >
+                                            북카트에 담기
+                                        </LoadingButton>
+                                        <LoadingButton loading={ false } variant="contained" color="primary">구매하기</LoadingButton>
+                                    </DesktopButtonGroup>
+                                </Box>
                         }
                     </BoxRight>
                 </Book>
@@ -136,6 +196,48 @@ const BookDisplay = () => {
                     <Typography variant="h4" component="div">평점 및 리뷰</Typography>
                 </Box>
             </Wrapper>
+    
+            <Snackbar
+                open={ isSuccessSnackbarOpen }
+                onClose={ () => setSuccessSnackbarOpen(false) }
+                anchorOrigin={ matches ? ({ vertical: 'top', horizontal: 'center' }) : ({ vertical: 'bottom', horizontal: 'right' }) }
+                autoHideDuration={ 3000 }
+                message="북카트에 담겼습니다."
+            />
+            {
+                matches &&
+                <AppBar position="fixed" color="transparent" sx={{ top: 'auto', bottom: 0 }}>
+                    {
+                        isBottomAppbarOpen &&
+                        <BottomAppbarOpenBox>
+                            <StyledFab onClick={ () => setBottomAppbarOpen(false) }><RemoveIcon /></StyledFab>
+                            <ItemCounter onCountChange={ handleCountChange } />
+                            <Typography variant="h5" component="div" sx={{ mr: 4 }}>{ (bookCartCount * price).toLocaleString() }원</Typography>
+                        </BottomAppbarOpenBox>
+                    }
+                    {
+                        isBottomAppbarOpen ? (
+                            <ButtonGroup sx={{ bgcolor: "white" }}>
+                                <LoadingButton
+                                    loading={ isAddBookCartLoading }
+                                    variant="outlined"
+                                    size="large"
+                                    sx={{ width: 1 }}
+                                    onClick={ addBookToBookCart }
+                                >
+                                    북카트에 담기
+                                </LoadingButton>
+                                <Button variant="contained" size="large" sx={{ width: 1 }} onClick={ () => setBottomAppbarOpen(true) }>구매하기</Button>
+                            </ButtonGroup>
+                        ) : (
+                            <ButtonGroup sx={{ bgcolor: "white" }}>
+                                <Button variant="contained" size="large" sx={{ width: 1 }} onClick={ () => setBottomAppbarOpen(true) }>구매하기</Button>
+                                <IconButton color="primary" size="large"><FavoriteIcon /></IconButton>
+                            </ButtonGroup>
+                        )
+                    }
+                </AppBar>
+            }
         </MainLayout>
     );
 };
@@ -200,10 +302,7 @@ const BoxRight = styled.div`
     }
 `;
 const DesktopButtonGroup = styled.div`
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-    
+    margin-top: 16px;
     > button:not(:last-child) {
         margin-right: 8px;
     }
@@ -235,3 +334,18 @@ const BookMetaTable = styled.table`
 		width: 512px;
     }
 `;
+const BottomAppbarOpenBox = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 0;
+    background-color: white;
+`;
+const StyledFab = styled(Fab)({
+    position: 'absolute',
+    zIndex: 1,
+    top: -30,
+    left: 0,
+    right: 0,
+    margin: '0 auto',
+});

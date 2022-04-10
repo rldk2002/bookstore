@@ -18,12 +18,12 @@ public class MemberService {
      * 회원 추가
      */
     @PreAuthorize("permitAll()")
-    public void addMember(@NonNull Member member) {
+    public void addMember(Member member) {
         memberMapper.insertMember(member);
     }
 
     @PreAuthorize("permitAll()")
-    public Member getMemberPublic(@NonNull String name, @NonNull String value) {
+    public Member getMemberPublic(String name, String value) {
         Map<String, Object> params = Map.of(name, value);
         return memberMapper.selectMember(params);
     }

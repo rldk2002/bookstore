@@ -79,3 +79,14 @@ export const useFetchBookItem = itemId => {
         }
     );
 }
+
+export const useAddBookToBookCart = () => {
+    return useMutation(
+        ({ itemId, count }) => ajax.post("/books/cart", null, {
+            params: {
+                itemId: itemId,
+                count: count
+            }
+        })
+    );
+}

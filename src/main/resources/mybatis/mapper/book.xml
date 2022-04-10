@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.rldk2002.bookstore.book.mapper.BookMapper">
+    <insert id="mergeBookCart">
+        MERGE INTO BOOK_CART BC
+            USING DUAL
+            ON (
+                BC.MEMBER_NO = #{ bookCart.memberNo } AND
+                BC.BOOK_ITEMID = #{ bookCart.itemId }
+            )
+        WHEN MATCHED THEN
+            UPDATE SET
+                BC.BOOKCART_COUNT = BC.BOOKCART_COUNT + #{ bookCart.count },
+                BC.BOOKCART_TIMESTAMP = sysdate
+        WHEN NOT MATCHED THEN
+            INSERT (MEMBER_NO, BOOK_ITEMID, BOOKCART_COUNT, BOOKCART_TIMESTAMP)
+            VALUES (#{ bookCart.memberNo }, #{ bookCart.itemId }, #{ bookCart.count }, sysdate)
+    </insert>
+</mapper>
