@@ -72,17 +72,35 @@ export const useFetchBookSection = (categoryId, section) => {
 }
 export const useFetchBookItem = itemId => {
     return useQuery(
-        queryKeys.book({ itemId: itemId }),
+        queryKeys.book([{ itemId: itemId }]),
         () => ajax.get("/books/item/" + itemId), {
             staleTime: Infinity,
             cacheTime: Infinity
         }
     );
 }
-
+export const useFetchBookCart = () => {
+    return useQuery(
+        queryKeys.bookCart([queryKeywords.principal]),
+        () => ajax.get("/books/cart"), {
+            staleTime: 0,
+            cacheTime: 0
+        }
+    );
+};
 export const useAddBookToBookCart = () => {
     return useMutation(
         ({ itemId, count }) => ajax.post("/books/cart", null, {
+            params: {
+                itemId: itemId,
+                count: count
+            }
+        })
+    );
+}
+export const useUpdateBookCartCount = () => {
+    return useMutation(
+        ({ itemId, count }) => ajax.patch("/books/cart/count", null, {
             params: {
                 itemId: itemId,
                 count: count

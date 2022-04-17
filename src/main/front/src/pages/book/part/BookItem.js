@@ -63,7 +63,7 @@ const BookItem = ({ book }) => {
                 </Link>
                 <MetaData>
                     <Link to={ `/books/item/${ itemId }` }>
-                        <Typography variant="h6" gutterBottom component="div">{ title }</Typography>
+                        <Typography variant="h6" gutterBottom component="div" sx={{ fontWeight: "bold" }}>{ title }</Typography>
                     </Link>
                     <MetaDataList>
                         { author && <Attribute><span>저자</span>{author}</Attribute> }

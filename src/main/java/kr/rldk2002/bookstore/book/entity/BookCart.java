@@ -15,9 +15,9 @@ public class BookCart {
     private String memberNo;
     private LocalDateTime timestamp;
 
-    public BookCart(int itemId, int count, String memberNo) {
+    public BookCart(String memberNo, int itemId, int count) {
+        this.memberNo = memberNo;
         this.itemId = itemId;
         this.count = count;
-        this.memberNo = memberNo;
     }
 }

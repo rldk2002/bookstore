@@ -7,6 +7,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -15,6 +17,16 @@ public class BookService {
 
     @PreAuthorize("isAuthenticated() and (#memberNo == principal.no)")
     public void addBookToBookCart(String memberNo, int itemId, int count) {
-        bookMapper.mergeBookCart(new BookCart(itemId, count, memberNo));
+        bookMapper.mergeBookCart(new BookCart(memberNo, itemId, count));
+    }
+
+    @PreAuthorize("isAuthenticated() and (#memberNo == principal.no)")
+    public List<BookCart> getBookCartList(String memberNo) {
+        return bookMapper.selectBookCartList(memberNo);
+    }
+
+    @PreAuthorize("isAuthenticated() and (#memberNo == principal.no)")
+    public void updateBookCartCount(String memberNo, int itemId, int count) {
+        bookMapper.updateBookCartCount(new BookCart(memberNo, itemId, count));
     }
 }

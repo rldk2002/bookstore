@@ -21,6 +21,7 @@ import BookCategoryContext from "../../context/BookCategoryContext";
 import { grey } from "@mui/material/colors";
 import { LoadingButton } from "@mui/lab";
 import ItemCounter from "./part/ItemCounter";
+import useTitle from "../../services/useTitle";
 
 const BookDisplay = () => {
     const navigate = useNavigate();
@@ -35,6 +36,8 @@ const BookDisplay = () => {
             totalResults
         } = {}
     } = useFetchBookItem(itemId);
+    
+    useTitle(books[0]?.title);
     
     /*
      * 북카트

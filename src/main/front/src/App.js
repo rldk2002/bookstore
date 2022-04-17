@@ -9,7 +9,14 @@ import theme from "./styles/theme";
 import { Flip, ToastContainer } from "react-toastify";
 import AppRoute from "./AppRoute";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material";
+import { combineReducers, createStore } from "redux";
+import bookCartCheckedList from "./redux/bookCartCheckedList";
+import { Provider } from "react-redux";
 
+const rootReducer = combineReducers({
+    bookCartCheckedList
+});
+const store = createStore(rootReducer);
 
 const App = () => {
     const queryClient = new QueryClient({
@@ -28,29 +35,32 @@ const App = () => {
             }
         }
     });
+    
     const { reset } = useQueryErrorResetBoundary();
     
     return (
-        <QueryClientProvider client={ queryClient }>
-            <ErrorBoundary
-                onReset={ reset }
-                fallbackRender={ ({ error }) => <ErrorPage error={ error } /> }
-            >
-                <BrowserRouter>
-                    <GlobalStyle />
-                    <StyledComponentsThemeProvider theme={ theme }>
-                        <MuiThemeProvider theme={ theme }>
-                            <AppRoute />
-                            <ToastContainer
-                                autoClose={ 500 }
-                                hideProgressBar
-                                transition={ Flip }
-                            />
-                        </MuiThemeProvider>
-                    </StyledComponentsThemeProvider>
-                </BrowserRouter>
-            </ErrorBoundary>
-        </QueryClientProvider>
+        <Provider store={ store }>
+            <QueryClientProvider client={ queryClient }>
+                <ErrorBoundary
+                    onReset={ reset }
+                    fallbackRender={ ({ error }) => <ErrorPage error={ error } /> }
+                >
+                    <BrowserRouter>
+                        <GlobalStyle />
+                        <StyledComponentsThemeProvider theme={ theme }>
+                            <MuiThemeProvider theme={ theme }>
+                                <AppRoute />
+                                <ToastContainer
+                                    autoClose={ 500 }
+                                    hideProgressBar
+                                    transition={ Flip }
+                                />
+                            </MuiThemeProvider>
+                        </StyledComponentsThemeProvider>
+                    </BrowserRouter>
+                </ErrorBoundary>
+            </QueryClientProvider>
+        </Provider>
     );
 }
 

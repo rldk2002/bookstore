@@ -7,6 +7,8 @@ import SignUp from "./pages/authentication/SignUp";
 import BookSearchResult from "./pages/book/BookSearchResult";
 import BookCategoryResult from "./pages/book/BookCategoryResult";
 import BookDisplay from "./pages/book/BookDisplay";
+import BookCart from "./pages/book/BookCart";
+import PrivateRoute from "./pages/PrivateRoute";
 
 const AppRoute = () => {
     return (
@@ -18,6 +20,7 @@ const AppRoute = () => {
                 <Route path="search" element={ <BookSearchResult /> } />
                 <Route path="category/:categoryId" element={ <BookCategoryResult /> } />
                 <Route path="item/:itemId" element={ <BookDisplay /> } />
+                <Route path="cart" element={ <PrivateRoute component={ BookCart } /> }/>
                 <Route path="*" element={ <NotFound /> } />
             </Route>
             <Route path="*" element={ <NotFound /> } />

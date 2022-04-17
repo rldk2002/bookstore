@@ -38,7 +38,9 @@ import {
     Logout as LogoutIcon,
     GroupAdd as GroupAddIcon,
     Delete as DeleteIcon,
-    ManageAccounts as ManageAccountsIcon, ExpandLess, ExpandMore
+    ManageAccounts as ManageAccountsIcon,
+    ShoppingCartOutlined as ShoppingCartOutlinedIcon,
+    ExpandLess, ExpandMore
 } from '@mui/icons-material';
 import { makeStyles } from "@mui/styles";
 import styled from "styled-components";
@@ -117,11 +119,11 @@ const MainAppBar = () => {
     const [isSearchDialogOpen, setSearchDialogOpen] = useState(false);  // 검색창(모바일) dialog toggle
     
     const menus = [
-        { name: '국내도서', icon: <LibraryBooksIcon />, action: () => setDomesticBookListOpen(!isDomesticBookListOpen), nested: true },
-        { name: '해외도서', icon: <LibraryBooksIcon />, action: () => setOverseasBookListOpen(!isOverseasBookListOpen), nested: true },
         { name: '베스트셀러', icon: <StarIcon />, nested: false },
         { name: '신규도서', icon: <NewReleasesIcon />, nested: false },
         { name: '추천도서', icon: <RecommendIcon />, nested: false },
+        { name: '국내도서', icon: <LibraryBooksIcon />, action: () => setDomesticBookListOpen(!isDomesticBookListOpen), nested: true },
+        { name: '해외도서', icon: <LibraryBooksIcon />, action: () => setOverseasBookListOpen(!isOverseasBookListOpen), nested: true },
     ];
     
     const queryClient = useQueryClient();
@@ -188,7 +190,7 @@ const MainAppBar = () => {
                             {
                                 principal ? (
                                     <NavGroup>
-                                        <Link component="button" underline="none" sx={{ color: "white" }}>장바구니</Link>
+                                        <Link component="button" underline="none" sx={{ color: "white" }} onClick={ () => navigate("/books/cart") }>북카트</Link>
                                         <Link component="button" underline="none" sx={{ color: "white" }}>마이페이지</Link>
                                         <Link
                                             component="button"
@@ -268,7 +270,7 @@ const MainAppBar = () => {
                     </Toolbar>
                 </Container>
                 <Drawer open={ isDrawerOpen } ModalProps={{ onBackdropClick: () => toggleDrawer(false) }}>
-                    <Box sx={{ width: 250 }}>
+                    <Box sx={{ width: 300 }}>
                         <List>
                             <ListItem>
                                 { isLoadingPrincipal && <CircularProgress /> }
@@ -291,6 +293,7 @@ const MainAppBar = () => {
                             principal ? (
                                 <BottomNavigation showLabels>
                                     <BottomNavigationAction label="마이페이지" icon={ <ManageAccountsIcon/> } />
+                                    <BottomNavigationAction label="북카트" icon={ <ShoppingCartOutlinedIcon /> } onClick={ () => navigate("/books/cart") } />
                                     <BottomNavigationAction label="로그아웃" icon={ <LogoutIcon /> } onClick={ handleLogout } />
                                 </BottomNavigation>
                             ) : (
