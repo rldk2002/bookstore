@@ -1,6 +1,7 @@
 import { createContext } from "react";
 
 const BookCategoryContext = createContext({
+    0: "국내도서>기타",
     100: "국내도서",
     101: "국내도서>소설",
     102: "국내도서>시/에세이",

@@ -3,13 +3,22 @@ import styled from "styled-components";
 import { grey } from "@mui/material/colors";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Collapse, IconButton, Paper, Snackbar, Typography, useMediaQuery } from "@mui/material";
-import { AddShoppingCart as AddShoppingCartIcon, ExpandLess, ExpandMore, Favorite as FavoriteIcon } from "@mui/icons-material";
+import {
+    AddShoppingCart as AddShoppingCartIcon,
+    ExpandLess,
+    ExpandMore,
+    Favorite as FavoriteIcon,
+    FavoriteBorder as FavoriteBorderIcon
+} from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { useAddBookToBookCart } from "../../../api/queries";
+import { useAddBookToBookCart, useFetchBookLike, useToggleBookLike } from "../../../api/queries";
+import { queryKeys, queryKeywords } from "../../../api/queryKeys";
+import { useQueryClient } from "react-query";
 
 const BookItem = ({ book }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const queryClient = useQueryClient();
     const {
         itemId,
         priceSales: price,
@@ -43,6 +52,19 @@ const BookItem = ({ book }) => {
             },
             onError: err => {
                 console.log(err);
+            }
+        });
+    };
+    
+    /*
+     * 좋아요
+     */
+    const { isLoading: isFetchBookLikeLoading, data: bookLike } = useFetchBookLike(itemId);
+    const { isLoading: isToggleBookLikeLoading, mutateAsync: mutateAsyncToggleBookLike } = useToggleBookLike();
+    const handleToggleBookLike = async () => {
+        await mutateAsyncToggleBookLike({ itemId: itemId }, {
+            onSuccess: data => {
+                queryClient.invalidateQueries(queryKeys.bookLike([queryKeywords.principal, { itemId: itemId }]));
             }
         });
     };
@@ -81,7 +103,15 @@ const BookItem = ({ book }) => {
                 {
                     !matches &&
                     <DesktopButtonGroup>
-                        <LoadingButton loading={ false } variant="outlined" color="error" startIcon={ <FavoriteIcon /> }>좋아요</LoadingButton>
+                        <LoadingButton
+                            loading={ isFetchBookLikeLoading || isToggleBookLikeLoading }
+                            variant="outlined"
+                            color="error"
+                            startIcon={ bookLike ? <FavoriteIcon /> : <FavoriteBorderIcon /> }
+                            onClick={ handleToggleBookLike }
+                        >
+                            좋아요
+                        </LoadingButton>
                         <LoadingButton
                             loading={ isAddBookCartLoading }
                             variant="outlined"
@@ -99,7 +129,15 @@ const BookItem = ({ book }) => {
                 matches &&
                 <Collapse in={ isOpen } sx={{ backgroundColor: "white" }}>
                     <MobileButtonGroup>
-                        <LoadingButton loading={ false } variant="outlined" color="error" startIcon={ <FavoriteIcon /> }>좋아요</LoadingButton>
+                        <LoadingButton
+                            loading={ isFetchBookLikeLoading || isToggleBookLikeLoading }
+                            variant="outlined"
+                            color="error"
+                            startIcon={ bookLike ? <FavoriteIcon /> : <FavoriteBorderIcon /> }
+                            onClick={ handleToggleBookLike }
+                        >
+                            좋아요
+                        </LoadingButton>
                         <LoadingButton
                             loading={ isAddBookCartLoading }
                             variant="outlined"

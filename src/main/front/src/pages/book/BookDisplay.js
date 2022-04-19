@@ -2,19 +2,24 @@ import React, { useContext, useState } from 'react';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../components/layout/MainLayout";
 import styled from "styled-components";
-import { useAddBookToBookCart, useFetchBookItem } from "../../api/queries";
+import { useAddBookToBookCart, useFetchBookItem, useFetchBookLike, useToggleBookLike } from "../../api/queries";
 import {
     AppBar,
     Box, Button, ButtonGroup,
     CircularProgress,
-    Divider, Fab, IconButton,
-    Link,
+    Divider, Fab, Link,
     Paper,
     Rating,
     Snackbar, Typography,
     useMediaQuery
 } from "@mui/material";
-import { Remove as RemoveIcon, AddShoppingCart as AddShoppingCartIcon, Favorite as FavoriteIcon, Home } from "@mui/icons-material";
+import {
+    Remove as RemoveIcon,
+    AddShoppingCart as AddShoppingCartIcon,
+    Favorite as FavoriteIcon,
+    Home,
+    FavoriteBorder as FavoriteBorderIcon
+} from "@mui/icons-material";
 import BasicBreadcrumbs from "../../components/BasicBreadcrumbs";
 import NotFound from "../error/NotFound";
 import BookCategoryContext from "../../context/BookCategoryContext";
@@ -22,10 +27,13 @@ import { grey } from "@mui/material/colors";
 import { LoadingButton } from "@mui/lab";
 import ItemCounter from "./part/ItemCounter";
 import useTitle from "../../services/useTitle";
+import { useQueryClient } from "react-query";
+import { queryKeys, queryKeywords } from "../../api/queryKeys";
 
 const BookDisplay = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const queryClient = useQueryClient();
     const matches = useMediaQuery(theme => theme.breakpoints.down('tablet'));
     const categoryNameContext = useContext(BookCategoryContext);
     const { itemId } = useParams();
@@ -65,6 +73,19 @@ const BookDisplay = () => {
     };
     const handleCountChange = count => {
         setBookCartCount(count);
+    };
+    
+    /*
+     * 좋아요
+     */
+    const { isLoading: isFetchBookLikeLoading, data: bookLike } = useFetchBookLike(itemId);
+    const { isLoading: isToggleBookLikeLoading, mutateAsync: mutateAsyncToggleBookLike } = useToggleBookLike();
+    const handleToggleBookLike = async () => {
+        await mutateAsyncToggleBookLike({ itemId: itemId }, {
+            onSuccess: data => {
+                queryClient.invalidateQueries(queryKeys.bookLike([queryKeywords.principal, { itemId: itemId }]));
+            }
+        });
     };
     
     /*
@@ -143,7 +164,15 @@ const BookDisplay = () => {
                                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", ml: "auto" }}>
                                     <ItemCounter onCountChange={ handleCountChange }/>
                                     <DesktopButtonGroup>
-                                        <LoadingButton loading={ false } variant="outlined" color="error" startIcon={ <FavoriteIcon /> }>좋아요</LoadingButton>
+                                        <LoadingButton
+                                            loading={ isFetchBookLikeLoading || isToggleBookLikeLoading }
+                                            variant="outlined"
+                                            color="error"
+                                            startIcon={ bookLike ? <FavoriteIcon /> : <FavoriteBorderIcon /> }
+                                            onClick={ handleToggleBookLike }
+                                        >
+                                            좋아요
+                                        </LoadingButton>
                                         <LoadingButton
                                             loading={ isAddBookCartLoading }
                                             variant="outlined"
@@ -235,7 +264,14 @@ const BookDisplay = () => {
                         ) : (
                             <ButtonGroup sx={{ bgcolor: "white" }}>
                                 <Button variant="contained" size="large" sx={{ width: 1 }} onClick={ () => setBottomAppbarOpen(true) }>구매하기</Button>
-                                <IconButton color="primary" size="large"><FavoriteIcon /></IconButton>
+                                <LoadingButton
+                                    color="primary"
+                                    size="large"
+                                    loading={ isFetchBookLikeLoading || isToggleBookLikeLoading }
+                                    onClick={ handleToggleBookLike }
+                                >
+                                    { bookLike ? <FavoriteIcon /> : <FavoriteBorderIcon /> }
+                                </LoadingButton>
                             </ButtonGroup>
                         )
                     }

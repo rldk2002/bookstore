@@ -108,3 +108,34 @@ export const useUpdateBookCartCount = () => {
         })
     );
 }
+export const useRemoveBookCart = () => {
+    return useMutation(
+        ({ itemIds }) => ajax.delete("/books/cart", {
+            params: {
+                itemIds: itemIds.join(",")
+            }
+        })
+    );
+}
+export const useToggleBookLike = () => {
+    return useMutation(
+        ({ itemId }) => ajax.post("/books/like", null, {
+            params: {
+                itemId: itemId
+            }
+        })
+    );
+}
+export const useFetchBookLike = itemId => {
+    return useQuery(
+        queryKeys.bookLike([queryKeywords.principal, { itemId: itemId }]),
+        () => ajax.get("/books/like", {
+            params: {
+                itemId: itemId
+            }
+        }), {
+            staleTime: 0,
+            cacheTime: 0
+        }
+    );
+}

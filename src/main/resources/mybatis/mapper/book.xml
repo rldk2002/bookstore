@@ -5,10 +5,16 @@
 
 <mapper namespace="kr.rldk2002.bookstore.book.mapper.BookMapper">
     <resultMap id="BookCartResultMap" type="BookCart">
-        <id column="BOOK_ITEMID" property="itemId"/>
-        <result column="BOOKCART_COUNT" property="count"/>
-        <result column="BOOKCART_TIMESTAMP" property="timestamp"/>
-        <result column="MEMBER_NO" property="memberNo"/>
+        <id column="BOOK_ITEMID" property="itemId" />
+        <result column="BOOKCART_COUNT" property="count" />
+        <result column="BOOKCART_TIMESTAMP" property="timestamp" />
+        <result column="MEMBER_NO" property="memberNo" />
+    </resultMap>
+
+    <resultMap id="BookLikeResultMap" type="BookLike">
+        <result column="BOOK_ITEMID" property="itemId" />
+        <result column="BOOKLIKE_TIMESTAMP" property="timestamp" />
+        <result column="MEMBER_NO" property="memberNo" />
     </resultMap>
 
     <insert id="mergeBookCart">
@@ -47,4 +53,40 @@
             MEMBER_NO = #{ bookCart.memberNo } AND
             BOOK_ITEMID = #{ bookCart.itemId }
     </update>
+
+    <delete id="deleteBookCart">
+        DELETE FROM BOOK_CART
+        WHERE
+            MEMBER_NO = #{ memberNo } AND
+            BOOK_ITEMID = #{ itemId }
+    </delete>
+
+    <insert id="mergeBookLike">
+        MERGE INTO BOOK_LIKE BL
+        USING DUAL
+        ON (
+            BL.MEMBER_NO = #{ memberNo } AND
+            BL.BOOK_ITEMID = #{ itemId }
+        )
+        WHEN MATCHED THEN
+            UPDATE
+            SET BL.BOOKLIKE_TIMESTAMP = sysdate
+            DELETE WHERE
+                BL.MEMBER_NO = #{ memberNo } AND
+                BL.BOOK_ITEMID = #{ itemId }
+        WHEN NOT MATCHED THEN
+            INSERT (MEMBER_NO, BOOK_ITEMID, BOOKLIKE_TIMESTAMP)
+            VALUES (#{ memberNo }, #{ itemId }, sysdate)
+    </insert>
+
+    <select id="selectBookLike" resultMap="BookLikeResultMap">
+        SELECT MEMBER_NO,
+               BOOK_ITEMID,
+               BOOKLIKE_TIMESTAMP
+        FROM BOOK_LIKE
+        WHERE
+            MEMBER_NO = #{ memberNo } AND
+            BOOK_ITEMID = #{ itemId }
+    </select>
+
 </mapper>

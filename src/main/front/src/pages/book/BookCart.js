@@ -13,7 +13,7 @@ import {
     Snackbar,
     Typography
 } from "@mui/material";
-import { useFetchBookCart, useFetchBookItem, useUpdateBookCartCount } from "../../api/queries";
+import { useFetchBookCart, useFetchBookItem, useRemoveBookCart, useUpdateBookCartCount } from "../../api/queries";
 import { Home } from "@mui/icons-material";
 import BasicBreadcrumbs from "../../components/BasicBreadcrumbs";
 import { Link as RRDLink, useLocation, useNavigate } from "react-router-dom";
@@ -175,6 +175,7 @@ const TotalPrice = ({ checkedList, bookCartList }) => {
 };
 
 const BookCart = () => {
+    const queryClient = useQueryClient();
     const {
         isLoading: isFetchBookCartLoading,
         isSuccess: isFetchBookCartSuccess,
@@ -208,6 +209,18 @@ const BookCart = () => {
         }
     };
     
+    /* 북카트 책 삭제 */
+    const [isOpenSnackbar, setOpenSnackbar] = useState(false);
+    const { isLoading: isRemoveBookCartLoading, mutateAsync: mutateAsyncRemoveBookCart } = useRemoveBookCart();
+    const handleRemoveBookCartButtonClick = async () => {
+        await mutateAsyncRemoveBookCart({ itemIds: checkedBookCartList }, {
+            onSuccess: isAuthenticated => {
+                queryClient.invalidateQueries(queryKeys.bookCart([queryKeywords.principal]));
+                setOpenSnackbar(true);
+            }
+        })
+    };
+    
     const breadcrumbs = [
         <Link underline="hover" key="1" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center' }}><Home sx={{ pr: 1 }} /> Home</Link>,
         <Typography key="2" color="text.primary">북카트</Typography>,
@@ -228,7 +241,7 @@ const BookCart = () => {
                     {
                         isFetchBookCartSuccess && checkedBookCartList &&
                         <Box>
-                            <Box sx={{ px: 1, mb: 1, border: `1px solid ${ grey[400] }` }}>
+                            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: 1, mb: 1, border: `1px solid ${ grey[400] }` }}>
                                 <FormControlLabel
                                     label="전체 선택"
                                     control={
@@ -238,6 +251,15 @@ const BookCart = () => {
                                         />
                                     }
                                 />
+                                <LoadingButton
+                                    loading={ isRemoveBookCartLoading }
+                                    variant="contained"
+                                    size="small"
+                                    color="error"
+                                    onClick={ handleRemoveBookCartButtonClick }
+                                >
+                                    삭제
+                                </LoadingButton>
                             </Box>
                             {
                                 bookCarts.map(bookCart => {
@@ -260,6 +282,13 @@ const BookCart = () => {
                     }
                 </Box>
             </Wrapper>
+            <Snackbar
+                open={ isOpenSnackbar }
+                onClose={ () => setOpenSnackbar(false) }
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                autoHideDuration={ 3000 }
+                message="카트에 담긴 책이 삭제되었습니다."
+            />
         </MainLayout>
     );
 };
