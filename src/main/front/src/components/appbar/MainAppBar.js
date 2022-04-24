@@ -139,6 +139,9 @@ const MainAppBar = () => {
                         predicate: ({ queryKey }) => queryKey.find(key => key === queryKeywords.principal)
                     });
                 }
+            },
+            onError: error => {
+                alert("로그아웃 실패");
             }
         })
     };
@@ -147,16 +150,24 @@ const MainAppBar = () => {
     const [queryHistory, setQueryHistory] = useState(loadSearchHistory);
     const handlePressEnter = event => {
         if (event.key === 'Enter') {
-            saveSearchHistory(query);
-            setQueryHistory(loadSearchHistory);
-            setSearchDialogOpen(false);
-            redirectSearchResultPage(query);
+            if (query.trim() === '') {
+                alert("검색어를 입력하세요.");
+            } else {
+                saveSearchHistory(query);
+                setQueryHistory(loadSearchHistory);
+                setSearchDialogOpen(false);
+                redirectSearchResultPage(query);
+            }
         }
     }
     const handleSearchButtonClick = () => {
-        saveSearchHistory(query);
-        setSearchDialogOpen(false)
-        redirectSearchResultPage(query);
+        if (query.trim() === '') {
+            alert("검색어를 입력하세요.");
+        } else {
+            saveSearchHistory(query);
+            setSearchDialogOpen(false)
+            redirectSearchResultPage(query);
+        }
     }
     
     const handleSearchQueryClick = query => {

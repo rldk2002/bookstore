@@ -41,30 +41,35 @@ const BookItem = ({ book }) => {
     const { isLoading: isAddBookCartLoading, mutateAsync: mutateAsyncAddBookCart } = useAddBookToBookCart();
     const addBookToBookCart = async () => {
         await mutateAsyncAddBookCart({ itemId: itemId, count: 1 }, {
-            onSuccess: isAuthenticated => {
-                if (isAuthenticated) {
+            onSuccess: response => {
+                const { code } = response;
+                if (code === "200") {
                     setSuccessSnackbarOpen(true);
-                } else {
+                }
+                if (code === "401") {
                     if (window.confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")) {
                         redirectLogin();
                     }
                 }
-            },
-            onError: err => {
-                console.log(err);
             }
         });
     };
     
-    /*
-     * 좋아요
-     */
-    const { isLoading: isFetchBookLikeLoading, data: bookLike } = useFetchBookLike(itemId);
+    /* 좋아요 */
+    const { isLoading: isFetchBookLikeLoading, data: { content: bookLike } = {} } = useFetchBookLike(itemId);
     const { isLoading: isToggleBookLikeLoading, mutateAsync: mutateAsyncToggleBookLike } = useToggleBookLike();
     const handleToggleBookLike = async () => {
         await mutateAsyncToggleBookLike({ itemId: itemId }, {
-            onSuccess: data => {
-                queryClient.invalidateQueries(queryKeys.bookLike([queryKeywords.principal, { itemId: itemId }]));
+            onSuccess: response => {
+                const { code } = response;
+                if (code === "200") {
+                    queryClient.invalidateQueries(queryKeys.bookLike([queryKeywords.principal, { itemId: itemId }]));
+                }
+                if (code === "401") {
+                    if (window.confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")) {
+                        redirectLogin();
+                    }
+                }
             }
         });
     };

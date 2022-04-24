@@ -27,11 +27,11 @@ const App = () => {
                 cacheTime: 1000 * 60 * 30,
                 refetchOnMount: true,
                 refetchOnWindowFocus: false,
-                useErrorBoundary: true
+                useErrorBoundary: false
             },
             mutations: {
                 retry: false,
-                useErrorBoundary: true
+                useErrorBoundary: false
             }
         }
     });

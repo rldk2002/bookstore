@@ -13,4 +13,9 @@ public class ResponseResult {
     private String code;
     private String message;
     private Object content;
+
+    public ResponseResult(String code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 }

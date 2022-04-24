@@ -37,18 +37,18 @@ const BookCartItem = ({ bookCart }) => {
     
     const handleUpdateBookCartCount = async () => {
         await mutateAsyncUpdateBookCartCount({ itemId: itemId, count: bookCartCount }, {
-            onSuccess: isAuthenticated => {
-                if (isAuthenticated) {
+            onSuccess: response => {
+                const { code } = response;
+                if (code === "200") {
                     queryClient.invalidateQueries(queryKeys.bookCart([queryKeywords.principal]));
                     setSuccessSnackbarOpen(true);
-                } else {
-                    if (window.confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")) {
-                        redirectLogin();
-                    }
+                }
+                if (code === "401") {
+                    redirectLogin();
                 }
             },
             onError: err => {
-                console.log(err);
+                alert("장바구니 삭제 실패");
             }
         })
     };
@@ -217,6 +217,9 @@ const BookCart = () => {
             onSuccess: isAuthenticated => {
                 queryClient.invalidateQueries(queryKeys.bookCart([queryKeywords.principal]));
                 setOpenSnackbar(true);
+            },
+            onError: error => {
+                alert("북카트 책 삭제 실패");
             }
         })
     };

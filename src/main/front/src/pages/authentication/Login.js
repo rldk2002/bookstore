@@ -49,6 +49,12 @@ const Login = () => {
                         }
                     )
                 }
+            },
+            onError: error => {
+                const { status } = error;
+                if (status === 500) {
+                    setFailMessage("Internal Server Error");
+                }
             }
         })
     };

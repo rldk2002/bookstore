@@ -45,6 +45,17 @@
             BOOKCART_TIMESTAMP DESC
     </select>
 
+    <select id="selectBookCart" resultMap="BookCartResultMap">
+        SELECT MEMBER_NO,
+               BOOK_ITEMID,
+               BOOKCART_COUNT,
+               BOOKCART_TIMESTAMP
+        FROM BOOK_CART
+        WHERE
+            MEMBER_NO = #{ memberNo } AND
+            BOOK_ITEMID = #{ itemId }
+    </select>
+
     <update id="updateBookCartCount">
         UPDATE BOOK_CART
         SET

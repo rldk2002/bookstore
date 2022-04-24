@@ -37,8 +37,10 @@ const BookDisplay = () => {
     const matches = useMediaQuery(theme => theme.breakpoints.down('tablet'));
     const categoryNameContext = useContext(BookCategoryContext);
     const { itemId } = useParams();
+    
     const {
         isLoading: isFetchBookLoading,
+        isSuccess: isFetchBookSuccess,
         data: {
             item: books = {},
             totalResults
@@ -56,17 +58,14 @@ const BookDisplay = () => {
     const addBookToBookCart = async () => {
         if (bookCartCount > 0) {
             await mutateAsyncAddBookCart({ itemId: itemId, count: bookCartCount }, {
-                onSuccess: isAuthenticated => {
-                    if (isAuthenticated) {
+                onSuccess: response => {
+                    const { code } = response;
+                    if (code === "200") {
                         setSuccessSnackbarOpen(true);
-                    } else {
-                        if (window.confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")) {
-                            redirectLogin();
-                        }
                     }
-                },
-                onError: err => {
-                    console.log(err);
+                    if (code === "401") {
+                        redirectLogin();
+                    }
                 }
             });
         }
@@ -78,15 +77,22 @@ const BookDisplay = () => {
     /*
      * 좋아요
      */
-    const { isLoading: isFetchBookLikeLoading, data: bookLike } = useFetchBookLike(itemId);
+    const { isLoading: isFetchBookLikeLoading, data: { content: bookLike } = {} } = useFetchBookLike(itemId);
     const { isLoading: isToggleBookLikeLoading, mutateAsync: mutateAsyncToggleBookLike } = useToggleBookLike();
     const handleToggleBookLike = async () => {
         await mutateAsyncToggleBookLike({ itemId: itemId }, {
-            onSuccess: data => {
-                queryClient.invalidateQueries(queryKeys.bookLike([queryKeywords.principal, { itemId: itemId }]));
+            onSuccess: response => {
+                const { code } = response;
+                if (code === "200") {
+                    queryClient.invalidateQueries(queryKeys.bookLike([queryKeywords.principal, { itemId: itemId }]));
+                }
+                if (code === "401") {
+                    redirectLogin();
+                }
             }
         });
     };
+    
     
     /*
      * Botton Appbar
@@ -101,7 +107,8 @@ const BookDisplay = () => {
         );
     }
     
-    if (totalResults === 0) {
+    // useFetchBookItem()에서 책 정보 조회 실패시 404 Not Found
+    if (isFetchBookSuccess && totalResults === 0) {
         return <NotFound />;
     }
     
@@ -116,11 +123,12 @@ const BookDisplay = () => {
         description,
         isbn
     } = books[0];
+    const categoryName = categoryId === 0 ? "도서>기타" : categoryNameContext[categoryId];
     
     const breadcrumbs = [
         <Link underline="hover" key="1" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center' }}><Home sx={{ pr: 1 }} /> Home</Link>,
-        <Typography key="2" color="text.primary">{ categoryNameContext[categoryId]?.split('>')[0] }</Typography>,
-        <Link underline="hover" key="3" color="inherit" href={ `/books/category/${ categoryId }` } sx={{ display: 'flex', alignItems: 'center' }}>{ categoryNameContext[categoryId]?.split('>')[1] }</Link>,
+        <Typography key="2" color="text.primary">{ categoryName.split('>')[0] }</Typography>,
+        <Link underline="hover" key="3" color="inherit" href={ `/books/category/${ categoryId }` } sx={{ display: 'flex', alignItems: 'center' }}>{ categoryName.split('>')[1] }</Link>,
         <Typography key="4" color="text.primary">{ title }</Typography>,
     ];
     
@@ -270,7 +278,7 @@ const BookDisplay = () => {
                                     loading={ isFetchBookLikeLoading || isToggleBookLikeLoading }
                                     onClick={ handleToggleBookLike }
                                 >
-                                    { bookLike ? <FavoriteIcon /> : <FavoriteBorderIcon /> }
+                                    { bookLike ? <FavoriteIcon sx={{ color: "red" }} /> : <FavoriteBorderIcon sx={{ color: "red" }} /> }
                                 </LoadingButton>
                             </ButtonGroup>
                         )

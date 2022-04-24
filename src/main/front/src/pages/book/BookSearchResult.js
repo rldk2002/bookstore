@@ -85,7 +85,7 @@ const BookSearchResult = () => {
     
     const breadcrumbs = [
         <Link underline="hover" key="1" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center' }}><Home sx={{ pr: 1 }} /> Home</Link>,
-        <Typography key="3" color="text.primary">도서 검색결과</Typography>,
+        <Typography key="2" color="text.primary">도서 검색결과</Typography>,
     ];
     
     return (

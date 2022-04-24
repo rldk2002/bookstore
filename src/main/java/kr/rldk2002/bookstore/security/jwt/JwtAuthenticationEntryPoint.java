@@ -33,7 +33,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         if (exception instanceof InsufficientAuthenticationException) {
             log.debug("[ 권한 없음 - 401 ] : {}", exception.getMessage());
-            out.print(false);
+
+            error = new ResponseResult("401", exception.getMessage());
+
+            String errorJson = convertErrorToJson(error);
+            out.print(errorJson);
         } else {
             log.debug("[ 로그인 실패 ] {}", exception.getMessage());
 

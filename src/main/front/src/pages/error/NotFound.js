@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from "styled-components";
 import { Alert } from "@styled-icons/foundation";
+import useTitle from "../../services/useTitle";
 
 const NotFound = () => {
+    useTitle("404 Not Found");
     return (
         <Wrapper>
             <Alert size="150" />

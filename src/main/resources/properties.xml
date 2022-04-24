@@ -4,11 +4,11 @@
 	<!-- 데이터베이스 (오라클) -->
 	<entry key="database.driverClass">oracle.jdbc.driver.OracleDriver</entry>
 	<entry key="database.url">jdbc:oracle:thin:@localhost:1521:orcl</entry>
-<!--	<entry key="database.url">jdbc:oracle:thin:@bookstore_medium?TNS_ADMIN=C:/Users/rldk2/OneDrive/Desktop/oracle-cloud/Wallet_bookstore/</entry>-->
 <!--	<entry key="database.url">jdbc:oracle:thin:@bookstore_medium?TNS_ADMIN=/opt/oracle/wallet_bookstore/</entry>-->
 	<entry key="database.username">ENC(xZ4OVbnhRy+CSGX0QqVjzQ==)</entry>
 	<entry key="database.password">ENC(M4HsFDN7LnQGc43n2PLqEjn3M6na5dfz)</entry>
-	
+<!--	<entry key="database.url">jdbc:oracle:thin:@bookstore_medium?TNS_ADMIN=C:/Users/rldk2/OneDrive/Desktop/oracle-cloud/Wallet_bookstore/</entry>-->
+
 	<!-- jwt secret -->
 	<entry key="jwt.secret">ENC(FobfJp87Y3Yfivqvj4tbOy7t7wB6DHa/IMxrInw08jEyFPCal/U9LWLsI2MAVKk8/Rv7Wq/iblU=)</entry>
 	

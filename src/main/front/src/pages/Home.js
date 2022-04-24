@@ -1,11 +1,12 @@
 import React from 'react';
 import MainLayout from "../components/layout/MainLayout";
 import { queryKeys } from "../api/queryKeys";
+import { useFetchBookItem } from "../api/queries";
 
 
 const Home = () => {
-    
-    console.log(queryKeys.test([{a:1,b:2,c:3}]))
+    let a = {a: 1, b:2};
+    console.log({c:3, ...a});
     
     return (
         <MainLayout>

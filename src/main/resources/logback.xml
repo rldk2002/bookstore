@@ -15,6 +15,10 @@
 		<appender-ref ref="STDOUT" />
 		<!-- <appender-ref ref="FILE_APPENDER" /> -->
 	</logger>
+	<logger name="kr.rldk2002.bookstore.security" level="info" additivity="false">
+		<appender-ref ref="STDOUT" />
+		<!-- <appender-ref ref="FILE_APPENDER" /> -->
+	</logger>
 
     <root level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>

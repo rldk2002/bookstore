@@ -44,9 +44,9 @@ const BookCategoryResult = () => {
     
     const breadcrumbs = [
         <Link underline="hover" key="1" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center' }}><Home sx={{ pr: 1 }} /> Home</Link>,
-        <Typography key="3" color="text.primary">{ searchCategoryName?.split('>')[0] }</Typography>,
+        <Typography key="2" color="text.primary">{ searchCategoryName?.split('>')[0] }</Typography>,
         <Typography key="3" color="text.primary">{ searchCategoryName?.split('>')[1] }</Typography>,
-        <Typography key="3" color="text.primary">{ title }</Typography>,
+        <Typography key="4" color="text.primary">{ title }</Typography>,
     ];
     
     return (

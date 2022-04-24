@@ -53,7 +53,9 @@ export const useFetchBookQuery = params => {
             params: params
         }), {
             staleTime: Infinity,
-            cacheTime: Infinity
+            cacheTime: Infinity,
+            useErrorBoundary: false,
+            onError: err => { console.log(err) }
         }
     );
 }
@@ -126,7 +128,7 @@ export const useToggleBookLike = () => {
         })
     );
 }
-export const useFetchBookLike = itemId => {
+export const useFetchBookLike = (itemId, option) => {
     return useQuery(
         queryKeys.bookLike([queryKeywords.principal, { itemId: itemId }]),
         () => ajax.get("/books/like", {
@@ -135,7 +137,8 @@ export const useFetchBookLike = itemId => {
             }
         }), {
             staleTime: 0,
-            cacheTime: 0
+            cacheTime: 0,
+            ...option
         }
     );
 }
