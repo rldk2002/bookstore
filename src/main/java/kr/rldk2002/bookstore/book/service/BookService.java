@@ -22,8 +22,14 @@ public class BookService {
     }
 
     @PreAuthorize("isAuthenticated() and (#memberNo == principal.no)")
+
     public List<BookCart> getBookCartList(String memberNo) {
         return bookMapper.selectBookCartList(memberNo);
+    }
+
+    @PreAuthorize("isAuthenticated() and (#memberNo == principal.no)")
+    public int getBookCartListCount(String memberNo) {
+        return bookMapper.selectBookCartListCount(memberNo);
     }
 
     @PreAuthorize("isAuthenticated() and (#memberNo == principal.no)")

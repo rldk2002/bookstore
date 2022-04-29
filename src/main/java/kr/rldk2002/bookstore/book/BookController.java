@@ -50,6 +50,13 @@ public class BookController {
         return bookService.getBookCartList(memberNo);
     }
 
+    @GetMapping("/cart/size")
+    public int bookCartListCount(
+            @AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : no") String memberNo
+    ) {
+        return bookService.getBookCartListCount(memberNo);
+    }
+
     /* 북카트에 담긴 책 수량 수정 */
     @PatchMapping("/cart/count")
     public ResponseResult bookCartCountUpdate(

@@ -2,7 +2,7 @@ import React, { useState, Fragment, useContext } from 'react';
 import {
     alpha,
     AppBar,
-    Avatar,
+    Avatar, Badge,
     BottomNavigation,
     BottomNavigationAction,
     Box,
@@ -44,7 +44,7 @@ import {
 } from '@mui/icons-material';
 import { makeStyles } from "@mui/styles";
 import styled from "styled-components";
-import { useAuthentication, useLogout } from "../../api/queries";
+import { useAuthentication, useFetchBookCartSize, useLogout } from "../../api/queries";
 import { useQueryClient } from "react-query";
 import { queryKeywords } from "../../api/queryKeys";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
@@ -116,12 +116,22 @@ const MainAppBar = () => {
     const [isDrawerOpen, toggleDrawer] = useState(false);   // 모바일 화면 좌측 햄버거 메뉴 toggle
     const [isDomesticBookListOpen, setDomesticBookListOpen] = useState(false);  // 국내도서 카테고리 리스트 toggle
     const [isOverseasBookListOpen, setOverseasBookListOpen] = useState(false);  // 해외도서 카테고리 리스트 toggle
+    const [isDomesticBookDropDownOpen, setDomesticBookDropDownOpen] = useState(false);  // 국내도서 카테고리 dropdown
+    const [isOverseasBookDropDownOpen, setOverseasBookDropDownOpen] = useState(false);  // 해외도서 카테고리 dropdown
+    const [activeMenuIndex, setActiveMenuIndex] = useState('');
     const [isSearchDialogOpen, setSearchDialogOpen] = useState(false);  // 검색창(모바일) dialog toggle
     
     const menus = [
-        { name: '베스트셀러', icon: <StarIcon />, nested: false },
-        { name: '신규도서', icon: <NewReleasesIcon />, nested: false },
-        { name: '추천도서', icon: <RecommendIcon />, nested: false },
+        { name: '베스트셀러', action: () => navigate("/books/bestSeller") },
+        { name: '새로나온책', action: () => navigate("/books/newBook") },
+        { name: '추천도서', action: () => navigate("/books/recommend") },
+        { name: '국내도서', action: () => handleDomesticBookDropDown() },
+        { name: '해외도서', action: () => handleOverseasBookDropDown() },
+    ];
+    const menusMobile = [
+        { name: '베스트셀러', icon: <StarIcon />, action: () => navigate("/books/bestSeller"), nested: false },
+        { name: '새로나온책', icon: <NewReleasesIcon />, action: () => navigate("/books/newBook"), nested: false },
+        { name: '추천도서', icon: <RecommendIcon />, action: () => navigate("/books/recommend"), nested: false },
         { name: '국내도서', icon: <LibraryBooksIcon />, action: () => setDomesticBookListOpen(!isDomesticBookListOpen), nested: true },
         { name: '해외도서', icon: <LibraryBooksIcon />, action: () => setOverseasBookListOpen(!isOverseasBookListOpen), nested: true },
     ];
@@ -129,6 +139,8 @@ const MainAppBar = () => {
     const queryClient = useQueryClient();
     const { data: principal, isLoading: isLoadingPrincipal, isSuccess: isSuccessFetchPrincipal } = useAuthentication();
     const { mutateAsync: mutateAsyncLogout } = useLogout();
+    
+    const { data: cartSize = 0 } = useFetchBookCartSize();
     
     const handleLogout = async () => {
         await mutateAsyncLogout(null, {
@@ -144,6 +156,18 @@ const MainAppBar = () => {
                 alert("로그아웃 실패");
             }
         })
+    };
+    
+    const handleDomesticBookDropDown = () => {
+        setDomesticBookDropDownOpen(!isDomesticBookDropDownOpen);
+        setOverseasBookDropDownOpen(false);
+        isDomesticBookDropDownOpen ? setActiveMenuIndex('') : setActiveMenuIndex('3');
+        
+    };
+    const handleOverseasBookDropDown = () => {
+        setOverseasBookDropDownOpen(!isOverseasBookDropDownOpen);
+        setDomesticBookDropDownOpen(false);
+        isOverseasBookDropDownOpen ? setActiveMenuIndex('') : setActiveMenuIndex('4');
     };
     
     const [query, setQuery] = useState(''); // 도서 검색어
@@ -201,7 +225,9 @@ const MainAppBar = () => {
                             {
                                 principal ? (
                                     <NavGroup>
-                                        <Link component="button" underline="none" sx={{ color: "white" }} onClick={ () => navigate("/books/cart") }>북카트</Link>
+                                        <Link component="button" underline="none" sx={{ color: "white" }} onClick={ () => navigate("/books/cart") }>
+                                            북카트{ cartSize > 0 && `(${ cartSize })` }
+                                        </Link>
                                         <Link component="button" underline="none" sx={{ color: "white" }}>마이페이지</Link>
                                         <Link
                                             component="button"
@@ -256,13 +282,18 @@ const MainAppBar = () => {
                         <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <Box sx={{ display: { mobile: 'none', tablet: 'flex' } }}>
                                 {
-                                    menus.map(({ name }) => {
+                                    menus.map(({ name, action }, index) => {
                                         return (
                                             <Button
-                                                key={ name }
+                                                key={ index }
                                                 sx={{ my: 2, color: 'white', display: 'block', width: 'max-content' }}
+                                                onClick={ action }
                                             >
                                                 { name }
+                                                {
+                                                    activeMenuIndex === index.toString() &&
+                                                    <DropDownActive index={ index }>*</DropDownActive>
+                                                }
                                             </Button>
                                         );
                                     })
@@ -280,6 +311,56 @@ const MainAppBar = () => {
                         </Box>
                     </Toolbar>
                 </Container>
+                {
+                    !matches &&
+                    <Collapse in={ isDomesticBookDropDownOpen }>
+                        <DropDownMenu>
+                            <DropDownMenuNav>
+                                {
+                                    Object.entries(categoryNameContext)
+                                        .filter(([key, value]) => value.startsWith("국내도서>"))
+                                        .map(([key, value]) => [key, value.substring("국내도서>".length)])
+                                        .map(([key, value]) => {
+                                            return (
+                                                <Link
+                                                    key={ key }
+                                                    href={ `/books/category/${ key }` }
+                                                    underline="hover"
+                                                >
+                                                    { value }
+                                                </Link>
+                                            );
+                                        })
+                                }
+                            </DropDownMenuNav>
+                        </DropDownMenu>
+                    </Collapse>
+                }
+                {
+                    !matches &&
+                    <Collapse in={ isOverseasBookDropDownOpen }>
+                        <DropDownMenu>
+                            <DropDownMenuNav>
+                                {
+                                    Object.entries(categoryNameContext)
+                                        .filter(([key, value]) => value.startsWith("외국도서>"))
+                                        .map(([key, value]) => [key, value.substring("외국도서>".length)])
+                                        .map(([key, value]) => {
+                                            return (
+                                                <Link
+                                                    key={ key }
+                                                    href={ `/books/category/${ key }` }
+                                                    underline="hover"
+                                                >
+                                                    { value }
+                                                </Link>
+                                            );
+                                        })
+                                }
+                            </DropDownMenuNav>
+                        </DropDownMenu>
+                    </Collapse>
+                }
                 <Drawer open={ isDrawerOpen } ModalProps={{ onBackdropClick: () => toggleDrawer(false) }}>
                     <Box sx={{ width: 300 }}>
                         <List>
@@ -302,13 +383,17 @@ const MainAppBar = () => {
                         <Divider />
                         {
                             principal ? (
-                                <BottomNavigation showLabels>
+                                <BottomNavigation showLabels sx={{ height: "72px" }}>
                                     <BottomNavigationAction label="마이페이지" icon={ <ManageAccountsIcon/> } />
-                                    <BottomNavigationAction label="북카트" icon={ <ShoppingCartOutlinedIcon /> } onClick={ () => navigate("/books/cart") } />
+                                    <BottomNavigationAction
+                                        label="북카트"
+                                        icon={ cartSize > 0 ? <Badge badgeContent={ cartSize } color="primary"><ShoppingCartOutlinedIcon /></Badge> : <ShoppingCartOutlinedIcon /> }
+                                        onClick={ () => navigate("/books/cart") }
+                                    />
                                     <BottomNavigationAction label="로그아웃" icon={ <LogoutIcon /> } onClick={ handleLogout } />
                                 </BottomNavigation>
                             ) : (
-                                <BottomNavigation showLabels>
+                                <BottomNavigation showLabels sx={{ height: "72px" }}>
                                     <BottomNavigationAction label="회원가입" icon={ <GroupAddIcon /> } onClick={ () => navigate("/signup") }/>
                                     <BottomNavigationAction label="로그인" icon={ <LoginIcon /> } onClick={ redirectLogin }/>
                                 </BottomNavigation>
@@ -318,7 +403,7 @@ const MainAppBar = () => {
                         <Divider />
                         <List>
                             {
-                                menus.map(({ name, icon, action, nested }) => {
+                                menusMobile.map(({ name, icon, action, nested }) => {
                                     return (
                                         <Fragment key={ name }>
                                             <ListItemButton onClick={ action }>
@@ -454,4 +539,37 @@ const NavGroup = styled.div`
     > button:not(:first-child) {
         padding-left: 8px;
     }
+`;
+const DropDownMenu = styled.div`
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 16px 0;
+    background-color: ${ blue['100'] };
+`;
+const DropDownMenuNav = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
+    max-width: ${ ({ theme }) => theme.breakpoints.values.laptop }px;
+    
+    > a {
+        width: 152px;
+        padding: 4px 0;
+        text-align: center;
+        color: black;
+        
+        &:hover {
+            color: ${ blue['800'] };
+        }
+    }
+`;
+const DropDownActive = styled.div`
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: absolute;
+    bottom: -12px;
+    left: 0;
 `;

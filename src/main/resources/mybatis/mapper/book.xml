@@ -56,6 +56,12 @@
             BOOK_ITEMID = #{ itemId }
     </select>
 
+    <select id="selectBookCartListCount" resultType="int">
+        SELECT COUNT(*)
+        FROM BOOK_CART
+        WHERE MEMBER_NO = #{ memberNo }
+    </select>
+
     <update id="updateBookCartCount">
         UPDATE BOOK_CART
         SET

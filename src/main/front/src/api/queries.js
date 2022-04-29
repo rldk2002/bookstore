@@ -90,6 +90,15 @@ export const useFetchBookCart = () => {
         }
     );
 };
+export const useFetchBookCartSize = () => {
+    return useQuery(
+        queryKeys.bookCart([queryKeywords.principal, "size"]),
+        () => ajax.get("/books/cart/size"), {
+            staleTime: 0,
+            cacheTime: 0
+        }
+    );
+}
 export const useAddBookToBookCart = () => {
     return useMutation(
         ({ itemId, count }) => ajax.post("/books/cart", null, {

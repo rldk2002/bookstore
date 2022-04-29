@@ -45,6 +45,7 @@ const BookItem = ({ book }) => {
                 const { code } = response;
                 if (code === "200") {
                     setSuccessSnackbarOpen(true);
+                    queryClient.invalidateQueries(queryKeys.bookCart([queryKeywords.principal, "size"]));
                 }
                 if (code === "401") {
                     if (window.confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")) {

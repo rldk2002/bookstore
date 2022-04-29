@@ -11,6 +11,7 @@ import java.util.List;
 public interface BookMapper {
     void mergeBookCart(@Param("bookCart") BookCart bookCart);
     List<BookCart> selectBookCartList(@Param("memberNo") String memberNo);
+    int selectBookCartListCount(@Param("memberNo") String memberNo);
     BookCart selectBookCart(@Param("memberNo") String memberNo, @Param("itemId") int itemId);
     void updateBookCartCount(@Param("bookCart") BookCart bookCart);
     void deleteBookCart(@Param("memberNo") String memberNo, @Param("itemId") int itemId);

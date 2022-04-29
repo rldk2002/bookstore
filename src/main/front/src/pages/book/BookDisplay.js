@@ -62,6 +62,7 @@ const BookDisplay = () => {
                     const { code } = response;
                     if (code === "200") {
                         setSuccessSnackbarOpen(true);
+                        queryClient.invalidateQueries(queryKeys.bookCart([queryKeywords.principal, "size"]));
                     }
                     if (code === "401") {
                         redirectLogin();
@@ -385,6 +386,7 @@ const BottomAppbarOpenBox = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
     padding: 40px 0;
     background-color: white;
 `;

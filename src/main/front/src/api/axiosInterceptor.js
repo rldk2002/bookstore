@@ -3,6 +3,7 @@ import axios from "axios";
 
 const ajax = axios.create({
     baseURL: "https://localhost:3000"
+    // baseURL: "https://bookstore.o-r.kr:8443"
 });
 
 ajax.interceptors.request.use(
