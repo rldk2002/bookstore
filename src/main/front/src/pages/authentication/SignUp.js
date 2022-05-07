@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import MainLayout from "../../components/layout/MainLayout";
 import {
     Box, Button,
     Link, Modal, Stack,
@@ -16,6 +15,8 @@ import { useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
 import { useAddMember } from "../../api/queries";
 import { useNavigate } from "react-router-dom";
+import SimpleLayout from "../../components/layout/SimpleLayout";
+import useTitle from "../../services/useTitle";
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -25,6 +26,8 @@ const SignUp = () => {
             setOpenModal(false);
         }
     };
+    
+    useTitle("회원가입");
     
     const schema = yup.object().shape({
         id: yup.string()
@@ -71,7 +74,7 @@ const SignUp = () => {
     ];
     
     return (
-        <MainLayout>
+        <SimpleLayout title="회원가입">
             <BasicBreadcrumbs breadcrumbs={ breadcrumbs } />
             <Box sx={{ display: "flex", width: { mobile: 1, tablet: '500px' } }}>
                 <SignUpForm onSubmit={ handleSubmit(handleValid) }>
@@ -150,7 +153,7 @@ const SignUp = () => {
                     </ModalAction>
                 </ModalWrapper>
             </Modal>
-        </MainLayout>
+        </SimpleLayout>
     );
 };
 

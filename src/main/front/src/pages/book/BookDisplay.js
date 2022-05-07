@@ -268,7 +268,7 @@ const BookDisplay = () => {
                                 >
                                     북카트에 담기
                                 </LoadingButton>
-                                <Button variant="contained" size="large" sx={{ width: 1 }} onClick={ () => setBottomAppbarOpen(true) }>구매하기</Button>
+                                <Button variant="contained" size="large" sx={{ width: 1 }} onClick={ () => navigate("/order") }>구매하기</Button>
                             </ButtonGroup>
                         ) : (
                             <ButtonGroup sx={{ bgcolor: "white" }}>

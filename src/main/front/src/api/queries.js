@@ -151,3 +151,50 @@ export const useFetchBookLike = (itemId, option) => {
         }
     );
 }
+export const useUpdateShippingPlace = () => {
+    return useMutation(
+        form => ajax.post("/shipping/place", null, {
+            params: form
+        })
+    );
+}
+export const useFetchShippingPlace = shippingAddressNo => {
+    return useQuery(
+        queryKeys.shippingAddress([queryKeywords.principal, { shippingAddressNo: shippingAddressNo }]),
+        () => ajax.get("/shipping/place", {
+            params: {
+                no: shippingAddressNo
+            }
+        }), {
+            staleTime: 0,
+            cacheTime: 0
+        }
+    );
+}
+export const useRemoveShippingPlace = () => {
+    return useMutation(
+        shippingPlaceNo => ajax.delete("/shipping/place", {
+            params: {
+                no: shippingPlaceNo
+            }
+        })
+    );
+}
+export const useFetchShippingPlaces = () => {
+    return useQuery(
+        queryKeys.shippingAddress([queryKeywords.principal]),
+        () => ajax.get("/shipping/place"), {
+            staleTime: 0,
+            cacheTime: 0
+        }
+    );
+}
+export const useFetchShippingPlaceBasicNo = () => {
+    return useQuery(
+        queryKeys.shippingAddress([queryKeywords.principal, "basic"]),
+        () => ajax.get("/shipping/place/basic"), {
+            staleTime: 0,
+            cacheTime: 0
+        }
+    );
+}

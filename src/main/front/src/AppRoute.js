@@ -10,6 +10,7 @@ import BookDisplay from "./pages/book/BookDisplay";
 import BookCart from "./pages/book/BookCart";
 import PrivateRoute from "./pages/PrivateRoute";
 import BestSeller from "./pages/book/BestSeller";
+import OrderSheet from "./pages/order/OrderSheet";
 
 const AppRoute = () => {
     return (
@@ -26,9 +27,10 @@ const AppRoute = () => {
                 }
                 <Route path="category/:categoryId" element={ <BookCategoryResult /> } />
                 <Route path="item/:itemId" element={ <BookDisplay /> } />
-                <Route path="cart" element={ <PrivateRoute component={ BookCart } /> }/>
+                <Route path="cart" element={ <PrivateRoute component={ BookCart } /> } />
                 <Route path="*" element={ <NotFound /> } />
             </Route>
+            <Route path="/order" element={ <PrivateRoute component={ OrderSheet } /> } />
             <Route path="*" element={ <NotFound /> } />
         </Routes>
     );

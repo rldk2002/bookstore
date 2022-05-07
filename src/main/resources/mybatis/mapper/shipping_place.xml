@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.rldk2002.bookstore.order.mapper.ShippingMapper">
+    <resultMap id="ShippingPlaceMap" type="ShippingPlace">
+        <id column="SHIPPING_ADDRESS_NO" property="no"/>
+        <result column="SHIPPING_ADDRESS_PLACE_NAME" property="placeName"/>
+        <result column="SHIPPING_ADDRESS_RECEIVER" property="receiver"/>
+        <result column="SHIPPING_ADDRESS_PHONE" property="phone"/>
+        <result column="SHIPPING_ADDRESS_ZIPCODE" property="zipCode"/>
+        <result column="SHIPPING_ADDRESS_ROAD_ADDRESS" property="roadAddress"/>
+        <result column="SHIPPING_ADDRESS_ADD_ADDRESS" property="additionalAddress"/>
+        <result column="MEMBER_NO" property="memberNo"/>
+    </resultMap>
+
+    <insert id="insertShippingPlace">
+        INSERT INTO SHIPPING_ADDRESS(
+                MEMBER_NO,
+                SHIPPING_ADDRESS_NO,
+                SHIPPING_ADDRESS_PLACE_NAME,
+                SHIPPING_ADDRESS_RECEIVER,
+                SHIPPING_ADDRESS_PHONE,
+                SHIPPING_ADDRESS_ZIPCODE,
+                SHIPPING_ADDRESS_ROAD_ADDRESS,
+                SHIPPING_ADDRESS_ADD_ADDRESS
+        )
+        VALUES (
+                #{ memberNo },
+                #{ shippingPlace.no },
+                #{ shippingPlace.placeName },
+                #{ shippingPlace.receiver },
+                #{ shippingPlace.phone },
+                #{ shippingPlace.zipCode },
+                #{ shippingPlace.roadAddress },
+                #{ shippingPlace.additionalAddress }
+        )
+    </insert>
+
+    <select id="selectShippingPlace" resultMap="ShippingPlaceMap">
+        SELECT SHIPPING_ADDRESS_NO,
+               SHIPPING_ADDRESS_PLACE_NAME,
+               SHIPPING_ADDRESS_RECEIVER,
+               SHIPPING_ADDRESS_PHONE,
+               SHIPPING_ADDRESS_ZIPCODE,
+               SHIPPING_ADDRESS_ROAD_ADDRESS,
+               SHIPPING_ADDRESS_ADD_ADDRESS,
+               MEMBER_NO
+        FROM SHIPPING_ADDRESS
+        WHERE SHIPPING_ADDRESS_NO = #{ shippingAddressNo }
+    </select>
+
+    <select id="selectShippingPlaceList" resultMap="ShippingPlaceMap">
+        SELECT SHIPPING_ADDRESS_NO,
+               SHIPPING_ADDRESS_PLACE_NAME,
+               SHIPPING_ADDRESS_RECEIVER,
+               SHIPPING_ADDRESS_PHONE,
+               SHIPPING_ADDRESS_ZIPCODE,
+               SHIPPING_ADDRESS_ROAD_ADDRESS,
+               SHIPPING_ADDRESS_ADD_ADDRESS,
+               MEMBER_NO
+        FROM SHIPPING_ADDRESS
+        WHERE MEMBER_NO = #{ memberNo }
+    </select>
+
+    <update id="updateShippingPlace">
+        UPDATE SHIPPING_ADDRESS
+        SET
+            SHIPPING_ADDRESS_PLACE_NAME = #{ shippingPlace.placeName },
+            SHIPPING_ADDRESS_RECEIVER = #{ shippingPlace.receiver },
+            SHIPPING_ADDRESS_PHONE = #{ shippingPlace.phone },
+            SHIPPING_ADDRESS_ZIPCODE = #{ shippingPlace.zipCode },
+            SHIPPING_ADDRESS_ROAD_ADDRESS = #{ shippingPlace.roadAddress },
+            SHIPPING_ADDRESS_ADD_ADDRESS = #{ shippingPlace.additionalAddress }
+        WHERE
+            SHIPPING_ADDRESS_NO = #{ shippingPlace.no } AND
+            MEMBER_NO = #{ memberNo }
+    </update>
+
+    <delete id="deleteShippingPlace">
+        DELETE FROM SHIPPING_ADDRESS
+        WHERE
+            SHIPPING_ADDRESS_NO = #{ shippingAddressNo } AND
+            MEMBER_NO = #{ memberNo }
+    </delete>
+
+    <insert id="insertShippingPlaceBasic">
+        INSERT INTO SHIPPING_ADDRESS_BASIC (
+                SHIPPING_ADDRESS_NO,
+                MEMBER_NO
+        )
+        VALUES (
+                #{ shippingAddressNo },
+                #{ memberNo }
+        )
+    </insert>
+
+    <select id="selectShippingPlaceBasic" resultType="String">
+        SELECT
+               SHIPPING_ADDRESS_NO
+        FROM SHIPPING_ADDRESS_BASIC
+        WHERE MEMBER_NO = #{ memberNo }
+    </select>
+
+    <update id="updateShippingPlaceBasic">
+        UPDATE SHIPPING_ADDRESS_BASIC
+        SET
+            SHIPPING_ADDRESS_NO = #{ shippingAddressNo }
+        WHERE MEMBER_NO = #{ memberNo }
+    </update>
+
+    <delete id="deleteShippingPlaceBasic">
+        DELETE FROM SHIPPING_ADDRESS_BASIC
+        WHERE
+            MEMBER_NO = #{ memberNo }
+    </delete>
+
+</mapper>

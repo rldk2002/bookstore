@@ -12,15 +12,18 @@
         <typeAlias type="kr.rldk2002.bookstore.member.Member" alias="Member" />
         <typeAlias type="kr.rldk2002.bookstore.book.entity.BookCart" alias="BookCart" />
         <typeAlias type="kr.rldk2002.bookstore.book.entity.BookLike" alias="BookLike" />
+        <typeAlias type="kr.rldk2002.bookstore.order.entity.ShippingPlace" alias="ShippingPlace" />
     </typeAliases>
 
     <typeHandlers>
         <typeHandler handler="kr.rldk2002.bookstore.security.support.SimpleGrantedAuthoritiesTypeHandler" javaType="java.util.Set" />
         <typeHandler handler="kr.rldk2002.bookstore.security.support.AccountStatusesTypeHandler" javaType="java.util.Set" />
+        <typeHandler handler="kr.rldk2002.bookstore.security.support.OracleBoolanTypeHandler" javaType="java.lang.Boolean" />
     </typeHandlers>
 
     <mappers>
         <mapper resource="mybatis/mapper/member.xml" />
         <mapper resource="mybatis/mapper/book.xml" />
+        <mapper resource="mybatis/mapper/shipping_place.xml" />
     </mappers>
 </configuration>

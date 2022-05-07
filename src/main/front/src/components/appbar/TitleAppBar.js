@@ -1,32 +1,24 @@
 import React from 'react';
-import { AppBar, Container, IconButton, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { AppBar, Box, Container, Toolbar, Typography } from "@mui/material";
 
 const TitleAppBar = ({ title }) => {
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
-                <Toolbar disableGutters>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2, display: { xs: 'flex', sm: 'none' } }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
+                <Toolbar disableGutters sx={{ position: "relative" }}>
                     <Typography
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{ mr: 2, display: { xs: 'none', sm: 'flex' } }}
+                        sx={{ mr: 2, display: 'flex' }}
                     >
                         BookStore
                     </Typography>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }}>
-                        { title }
-                    </Typography>
+                    <Box sx={{ position: "absolute", width: 1, textAlign: "center" }}>
+                        <Typography variant="subtitle" component="div" >
+                            { title }
+                        </Typography>
+                    </Box>
                 </Toolbar>
             </Container>
         </AppBar>
