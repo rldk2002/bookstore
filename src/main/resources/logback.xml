@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    
+<!--    <property name="LOGS_PATH" value="C:\Users\rldk2\OneDrive\Desktop\programming\sts-3.9.14.RELEASE\logs"/>-->
+    
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) --- %cyan(%-40logger{20}) :[%boldGreen(%-20M)] %msg%n
+			</Pattern>
+		</encoder>
+	</appender>
+
+	<!-- <appender name="FILE_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %msg%n</Pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOGS_PATH}/logback.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>5MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+	</appender> -->
+
+	<logger name="kr.proj.bookstore" level="DEBUG" additivity="false">
+		<appender-ref ref="STDOUT" />
+		<!-- <appender-ref ref="FILE_APPENDER" /> -->
+	</logger>
+
+    <root level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+	
+</configuration>

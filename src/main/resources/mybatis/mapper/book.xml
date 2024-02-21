@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.proj.bookstore.book.mapper.BookMapper">
+
+    <!-- 도서 찜하기 -->
+    <resultMap id="BookDibsResultMap" type="kr.proj.bookstore.book.vo.BookDibs">
+        <result column="book_isbn" property="isbn"/>
+        <result column="member_no" property="memberNo"/>
+        <result column="book_dibs_added_date" property="addedDate"/>
+    </resultMap>
+
+    <insert id="insertBookDibs">
+        INSERT
+        INTO book_dibs
+        (
+            book_isbn,
+            member_no,
+            book_dibs_added_date
+        )
+        VALUES (
+            #{bookDibs.isbn},
+            #{bookDibs.memberNo},
+            #{bookDibs.addedDate}
+        )
+    </insert>
+
+    <select id="selectBookDibs" resultMap="BookDibsResultMap">
+        SELECT book_isbn,
+               member_no,
+               book_dibs_added_date
+        FROM book_dibs
+        WHERE
+              book_isbn = #{isbn}
+          AND member_no = #{memberNo}
+    </select>
+
+    <select id="selectBookDibsList" resultMap="BookDibsResultMap">
+        SELECT book_isbn,
+               member_no,
+               book_dibs_added_date
+        FROM book_dibs
+        WHERE
+              member_no = #{memberNo}
+        ORDER BY book_dibs_added_date DESC
+    </select>
+
+    <delete id="deleteBookDibs">
+        DELETE FROM book_dibs
+        WHERE
+              book_isbn = #{isbn}
+          AND member_no = #{memberNo}
+    </delete>
+
+
+    <!-- 도서 북카트 -->
+    <resultMap id="BookCartResultMap" type="kr.proj.bookstore.book.vo.BookCartItem">
+        <result column="member_no" property="memberNo"/>
+        <result column="book_isbn" property="isbn"/>
+        <result column="book_cart_count" property="count"/>
+        <result column="book_cart_added_date" property="addedDate"/>
+    </resultMap>
+
+    <insert id="insertBookCartItem">
+        INSERT
+        INTO book_cart
+        (
+            member_no,
+            book_isbn,
+            book_cart_count,
+            book_cart_added_date
+        )
+        VALUES (
+            #{ bookCartItem.memberNo },
+            #{ bookCartItem.isbn },
+            #{ bookCartItem.count },
+            #{ bookCartItem.addedDate}
+        )
+    </insert>
+    
+    <update id="updateBookCartItemCount">
+        UPDATE book_cart
+        SET book_cart_count = #{count}
+        WHERE
+            member_no = #{memberNo}
+        AND book_isbn = #{isbn}
+    </update>
+    
+    <select id="selectBookCartItem" resultMap="BookCartResultMap">
+        SELECT member_no,
+               book_isbn,
+               book_cart_count,
+               book_cart_added_date
+        FROM book_cart
+        WHERE 
+            member_no = #{memberNo}
+        AND book_isbn = #{isbn}
+    </select>
+
+    <select id="selectBookCart" resultMap="BookCartResultMap">
+        SELECT member_no,
+               book_isbn,
+               book_cart_count,
+               book_cart_added_date
+        FROM book_cart
+        WHERE member_no = #{memberNo}
+    </select>
+
+    <delete id="deleteBookCartItem">
+        DELETE FROM book_cart
+        WHERE
+            member_no = #{memberNo}
+        AND book_isbn = #{isbn}
+    </delete>
+</mapper>

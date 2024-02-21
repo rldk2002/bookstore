@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.proj.bookstore.security.jwt.JwtMapper">
+    <!-- 회원 JWT 토큰 -->
+    <resultMap id="MemberRefreshToken" type="kr.proj.bookstore.security.jwt.RefreshToken">
+        <id column="member_no" property="memberNo"/>
+        <result column="member_ip" property="ip"/>
+        <result column="refresh_token" property="refreshToken"/>
+    </resultMap>
+
+    <insert id="insertRefreshToken">
+        INSERT
+        INTO member_refresh
+        (
+            member_no,
+            member_ip,
+            refresh_token
+        )
+        VALUES
+        (
+            #{memberNo},
+            #{ip},
+            #{refreshToken}
+        )
+    </insert>
+
+    <select id="selectRefreshToken" resultMap="MemberRefreshToken">
+        SELECT member_no,
+               member_ip,
+               refresh_token
+        FROM member_refresh
+        WHERE member_no = #{memberNo}
+    </select>
+
+    <delete id="deleteRefreshToken">
+        DELETE FROM member_refresh
+        WHERE member_no = #{memberNo}
+    </delete>
+
+</mapper>

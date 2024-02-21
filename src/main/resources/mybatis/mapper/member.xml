@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.proj.bookstore.member.mapper.MemberMapper">
+
+    <!-- 회원 정보 -->
+    <resultMap id="MemberResultMap" type="kr.proj.bookstore.member.vo.Member">
+        <id column="member_no" property="no"/>
+        <result column="member_id" property="id"/>
+        <result column="member_password" property="password"/>
+        <result column="member_name" property="name"/>
+        <result column="member_phone" property="phoneNumber"/>
+        <result column="member_created_date" property="createdDate"/>
+        <association property="status" column="member_no" select="selectMemberStatus"/>
+        <collection property="roles" select="selectMemberRoles" column="member_no" javaType="java.util.Set"
+                    ofType="kr.proj.bookstore.security.userdetails.Role"/>
+    </resultMap>
+
+    <insert id="insertMember">
+        INSERT
+        INTO member
+        (
+            member_no,
+            member_id,
+            member_password,
+            member_name,
+            member_phone,
+            member_created_date
+        )
+        VALUES
+        (
+            #{member.no},
+            #{member.id},
+            #{member.password},
+            #{member.name},
+            #{member.phoneNumber},
+            #{member.createdDate}
+        )
+    </insert>
+
+    <select id="selectMember" resultMap="MemberResultMap">
+        SELECT member_no,
+               member_id,
+               member_password,
+               member_name,
+               member_phone,
+               member_created_date
+        FROM member
+        <where>
+            <if test="param eq 'no'">member_no = #{value}</if>
+            <if test="param eq 'id'">member_id = #{value}</if>
+            <if test="param eq 'name'">member_name = #{value}</if>
+        </where>
+    </select>
+
+    <insert id="insertMemberRole">
+        INSERT
+        INTO member_role
+        (
+            member_no,
+            member_role
+        )
+        VALUES
+        (
+            #{memberNo},
+            #{role}
+        )
+    </insert>
+
+    <select id="selectMemberRoles" resultType="kr.proj.bookstore.security.userdetails.Role">
+        SELECT member_role
+        FROM member_role
+        WHERE member_no = #{memberNo}
+    </select>
+
+
+    <!-- 회원 계정권한 -->
+    <resultMap id="MemberStatusResultMap" type="kr.proj.bookstore.security.userdetails.Status">
+        <result column="member_status_account_expired" property="accountExpired"/>
+        <result column="member_status_account_locked" property="accountLocked"/>
+        <result column="member_status_credentials_expired" property="credentialsExpired"/>
+        <result column="member_status_enabled" property="enabled"/>
+    </resultMap>
+
+    <insert id="insertMemberStatus">
+        INSERT
+        INTO member_status
+        (
+            member_no,
+            member_status_account_expired,
+            member_status_account_locked,
+            member_status_credentials_expired,
+            member_status_enabled
+        )
+        VALUES
+        (
+            #{memberNo},
+            #{status.accountExpired},
+            #{status.accountLocked},
+            #{status.credentialsExpired},
+            #{status.enabled}
+        )
+    </insert>
+
+    <select id="selectMemberStatus" resultMap="MemberStatusResultMap">
+        SELECT member_status_account_expired,
+               member_status_account_locked,
+               member_status_credentials_expired,
+               member_status_enabled
+        FROM member_status
+        WHERE member_no = #{memberNo}
+    </select>
+
+</mapper>
